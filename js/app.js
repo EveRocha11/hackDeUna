@@ -62,12 +62,16 @@ function goToOnboarding() {
   window.location.href = 'onboarding.html';
 }
 
-// Auto-redirect desde splash después de 5 segundos
+// Auto-redirect desde splash después de 3 segundos
 (function initSplash() {
-  if (document.documentElement.classList.contains('splash-page')) {
+  const isSplashPage =
+    document.body?.classList.contains('splash-page') ||
+    document.documentElement.classList.contains('splash-page');
+
+  if (isSplashPage) {
     globalThis.setTimeout(() => {
       globalThis.location.href = 'onboarding.html';
-    }, 5000);
+    }, 3000);
   }
 })();
 
