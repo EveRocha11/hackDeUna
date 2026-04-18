@@ -1,0 +1,183 @@
+/* ============================================================
+   layout.css
+   Estructura general de la página:
+   - page-wrapper     → centra el teléfono en pantalla
+   - phone-container  → simula el dispositivo móvil
+   - app-header       → cabecera fija
+   - tab-nav          → pestañas Cobrar / Gestionar
+   - content-area     → zona con scroll
+   - bottom-nav       → barra inferior fija
+   ============================================================ */
+
+/* ── Variables globales de diseño ─────────────────────────── */
+:root {
+  --purple-primary:   #4B2C81;   /* Botones, pestañas activas */
+  --purple-accent:    #6C4A9E;   /* Elementos secundarios */
+  --purple-light:     #EDE9F5;   /* Fondos de badges y avatares */
+  --green-success:    #3C9C6F;   /* Montos positivos */
+  --green-logo:       #0D9E7E;   /* Logo "d!" pequeño */
+
+  --text-primary:     #111111;
+  --text-secondary:   #555555;
+  --text-muted:       #999999;
+  --text-white:       #FFFFFF;
+
+  --bg-page:          #F4F6F8;   /* Fondo gris claro del cuerpo */
+  --bg-white:         #FFFFFF;
+  --bg-icon:          #F0F0F0;
+
+  --border-color:     #EEEEEE;
+
+  --radius-sm:        8px;
+  --radius-md:        12px;
+  --radius-lg:        16px;
+  --radius-xl:        30px;
+  --radius-full:      9999px;
+
+  --font-main: 'Inter', 'Roboto', system-ui, sans-serif;
+}
+
+/* ── Reset básico ──────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-page);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px 8px;
+}
+
+/* ── Wrapper de página ─────────────────────────────────────── */
+.page-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ── Contenedor principal (simula teléfono) ────────────────── */
+.phone-container {
+  width: 100%;
+  max-width: 400px;
+  height: 820px;
+  background: var(--bg-white);
+  border-radius: 36px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ── Header de la app ──────────────────────────────────────── */
+.app-header {
+  flex-shrink: 0;
+  background: var(--bg-white);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+}
+
+/* ── Pestañas de navegación (Cobrar / Gestionar) ───────────── */
+.tab-nav {
+  display: flex;
+}
+
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab.active {
+  color: var(--purple-primary);
+  border-bottom-color: var(--purple-primary);
+}
+
+/* ── Área de contenido (con scroll vertical) ───────────────── */
+/*
+   overflow: hidden en el contenedor padre para que el scroll
+   solo ocurra dentro de la vista activa, no entre vistas.
+*/
+.content-area {
+  flex: 1;
+  overflow: hidden;        /* ← evita que se vea la vista inactiva */
+  position: relative;
+  background: var(--bg-page);
+}
+
+/* ── Sistema de vistas (show/hide por pestaña) ─────────────── */
+/*
+   Cada vista ocupa exactamente el 100% del content-area.
+   overflow-y: auto aquí dentro para que cada vista tenga
+   su propio scroll independiente.
+*/
+.view {
+  display: none;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+
+  /* Ocultar scrollbar en todos los navegadores */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.view::-webkit-scrollbar {
+  display: none;
+}
+.view.active {
+  display: block;
+}
+
+/* ── Barra de navegación inferior ─────────────────────────── */
+.bottom-nav {
+  flex-shrink: 0;
+  display: flex;
+  background: var(--bg-white);
+  border-top: 1px solid var(--border-color);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-main);
+  transition: color 0.2s;
+}
+
+.nav-item.active {
+  color: var(--purple-primary);
+}
+
+.nav-item svg {
+  stroke: currentColor;
+}

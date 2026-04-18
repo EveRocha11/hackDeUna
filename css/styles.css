@@ -1,0 +1,195 @@
+/* ============================================================
+   styles.css
+   Espaciados y ajustes específicos por vista:
+   - Vista Cobrar (fondo blanco continuo)
+   - Vista Gestionar (fondo gris con tarjetas separadas)
+   ============================================================ */
+
+
+/* ── Vista Cobrar: fondo blanco que llena el contenedor ────── */
+#view-cobrar {
+  background: var(--bg-white);
+}
+
+
+/* ── Vista Gestionar: grilla de tarjetas con padding/gap ───── */
+/*
+   No ponemos display:flex aquí porque layout.css ya maneja
+   el display de .view. Solo definimos el layout interno
+   cuando la vista está visible.
+*/
+#view-gestionar.active {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  background: var(--bg-page);
+}
+
+
+/* ── Vista Mi Caja ─────────────────────────────────────────── */
+#view-caja.active {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  background: var(--bg-page);
+}
+
+/* Subtítulo dentro de la tarjeta de caja */
+.saldo-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Fila de cabecera: título + botón en la misma línea */
+.card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+/* Botón "Agregar venta manual" */
+.btn-venta-manual {
+  background: var(--purple-light);
+  color: var(--purple-accent);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-main);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-venta-manual:hover {
+  background: #ddd5f0;
+}
+
+/* Botón "Cerrar caja" */
+.btn-cerrar-caja {
+  width: 100%;
+  padding: 18px;
+  background: var(--purple-primary);
+  color: var(--text-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 16px;
+  font-weight: 700;
+  font-family: var(--font-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-cerrar-caja:hover {
+  background: #3d2268;
+}
+
+.btn-cerrar-caja:active {
+  transform: scale(0.98);
+}
+
+
+/* ── Barra de título (reemplaza las tabs en Caja y Menú) ─── */
+.page-title-bar {
+  padding: 10px 16px 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.page-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--purple-primary);
+}
+
+/* ── Contenido de páginas sin vistas (Caja, Menú) ──────────*/
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  background: var(--bg-page);
+  min-height: 100%;
+}
+
+/* ── Lista de opciones del Menú ─────────────────────────── */
+.menu-list {
+  list-style: none;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: var(--radius-sm);
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:hover {
+  background: var(--bg-page);
+}
+
+.menu-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--purple-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.menu-label {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* ── Botón cerrar sesión ─────────────────────────────────── */
+.btn-logout {
+  width: 100%;
+  padding: 16px;
+  background: #fff0f0;
+  color: #c0392b;
+  border: 1px solid #f5c6c6;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--font-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.2s;
+}
+
+.btn-logout:hover {
+  background: #ffe0e0;
+}
+
+/* ── nav-item como enlace (para <a> en lugar de <button>) ── */
+.nav-item {
+  text-decoration: none;
+  color: var(--text-muted);
+}
+
+.nav-item.active {
+  color: var(--purple-primary);
+}

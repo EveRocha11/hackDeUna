@@ -1,0 +1,447 @@
+/* ============================================================
+   components.css
+   Todos los componentes de la UI:
+   - Avatar + info de usuario
+   - Badges (Admin)
+   - Logo "d!"
+   - Monto + tipo de cobro
+   - Motivo row
+   - Teclado numérico
+   - Botón principal
+   - Tarjeta de saldo
+   - Accesos rápidos
+   - Novedades
+   - Lista de transacciones
+   ============================================================ */
+
+
+/* ── Avatar (círculo con iniciales) ───────────────────────── */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--purple-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--purple-primary);
+  flex-shrink: 0;
+}
+
+
+/* ── Información del usuario (header) ─────────────────────── */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.user-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+
+/* ── Badge "Admin" ─────────────────────────────────────────── */
+.badge-admin {
+  background: var(--purple-light);
+  color: var(--purple-primary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: var(--radius-full);
+}
+
+
+/* ── Botones de icono (QR, campana, auriculares) ───────────── */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  transition: background 0.15s;
+}
+
+.icon-btn:hover {
+  background: var(--bg-page);
+}
+
+
+/* ── Logo circular "d!" ────────────────────────────────────── */
+.logo-area {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 8px;
+}
+
+.d-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--purple-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-white);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: -1px;
+}
+
+/* Logo pequeño para novedades */
+.d-logo-small {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background: var(--green-logo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-white);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 17px;
+  letter-spacing: -1px;
+}
+
+
+/* ── Área de monto ─────────────────────────────────────────── */
+.monto-area {
+  text-align: center;
+  padding: 6px 0 16px;
+}
+
+.monto-label {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.monto-valor {
+  font-size: 46px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -2px;
+}
+
+
+/* ── Selector de tipo de cobro (QR / Tarje... / Man...) ────── */
+.tipo-cobro {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px 16px;
+}
+
+.tipo-btn {
+  padding: 10px 22px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-main);
+  background: var(--purple-light);
+  color: var(--purple-accent);
+  transition: background 0.2s, color 0.2s;
+}
+
+.tipo-btn.active {
+  background: var(--purple-primary);
+  color: var(--text-white);
+}
+
+.tipo-btn:hover:not(.active) {
+  background: #ddd5f0;
+}
+
+
+/* ── Fila de motivo (opcional) ─────────────────────────────── */
+.motivo-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 14px;
+  color: var(--text-muted);
+  background: var(--bg-white);
+  cursor: pointer;
+}
+
+.motivo-row:hover {
+  background: var(--bg-page);
+}
+
+.chevron {
+  font-size: 22px;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+
+/* ── Teclado numérico ──────────────────────────────────────── */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 6px 16px 0;
+  background: var(--bg-white);
+}
+
+.key {
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 500;
+  font-family: var(--font-main);
+  color: var(--purple-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+  user-select: none;
+}
+
+.key:hover,
+.key:active {
+  background: var(--bg-page);
+}
+
+/* Tecla de borrar no tiene borde/fondo extra */
+.key-del {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* ── Botón principal "Continuar para Cobrar" ───────────────── */
+.cobrar-btn-wrap {
+  padding: 10px 16px 16px;
+  background: var(--bg-white);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 18px;
+  background: var(--purple-primary);
+  color: var(--text-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 17px;
+  font-weight: 700;
+  font-family: var(--font-main);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-primary:hover {
+  background: #3d2268;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+
+/* ── Tarjetas genéricas ────────────────────────────────────── */
+.card {
+  background: var(--bg-white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  padding: 16px 18px;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+}
+
+
+/* ── Tarjeta de saldo ──────────────────────────────────────── */
+.saldo-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.saldo-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.saldo-valor {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eye-icon {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+
+/* ── Accesos rápidos (grilla de 4 iconos) ──────────────────── */
+.accesos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.acceso-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.acceso-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--bg-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.acceso-item:hover .acceso-icon {
+  background: var(--purple-light);
+}
+
+.acceso-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.3;
+}
+
+
+/* ── Sección Novedades ─────────────────────────────────────── */
+.novedades-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.novedad-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 90px;
+}
+
+.novedad-card p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+
+/* ── Lista de transacciones ────────────────────────────────── */
+.transacciones-list {
+  list-style: none;
+}
+
+.txn-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.txn-row:last-child {
+  border-bottom: none;
+}
+
+/* Avatar de iniciales en transacciones */
+.txn-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--purple-light);
+  color: var(--purple-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Variante verde para ciertos avatares */
+.txn-avatar--green {
+  background: #e5f5ee;
+  color: var(--green-success);
+}
+
+.txn-info {
+  flex: 1;
+  min-width: 0; /* Evita desbordamiento de texto largo */
+}
+
+.txn-nombre {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.txn-fecha {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.txn-monto {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--green-success);
+  flex-shrink: 0;
+}

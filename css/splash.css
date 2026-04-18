@@ -1,0 +1,70 @@
+/* ============================================================
+   splash.css
+   Pantalla de bienvenida - Splash Screen
+   Estilos específicos para splash
+   ============================================================ */
+
+.splash-screen {
+  background: var(--purple-primary);
+}
+
+.splash-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  padding: 12px 0;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  transform: translateY(-6px);
+}
+
+.logo {
+  margin: 0;
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--text-white);
+}
+
+.cta {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: #1F2A2E;
+  color: var(--text-white);
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  min-width: 190px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  font-family: var(--font-main);
+}
+
+.cta:hover {
+  background: #1a1620;
+}
+
+.cta:active {
+  transform: scale(0.98);
+}
+
+.cta:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.90);
+  outline-offset: 3px;
+}
+
+@media (max-width: 360px) {
+  .logo { font-size: 50px; }
+  .cta { min-width: 175px; }
+}

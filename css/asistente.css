@@ -1,0 +1,105 @@
+/* ============================================================
+   asistente.css
+   Estilos específicos para la pantalla del asistente de voz
+   ============================================================ */
+
+.asistente-content {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  gap: 0;
+  height: 100%;
+}
+
+.asistente-chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chat-message {
+  display: flex;
+  max-width: 85%;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  word-wrap: break-word;
+}
+
+.chat-message p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.bot-message {
+  background: var(--purple-light);
+  color: var(--text-primary);
+  align-self: flex-start;
+}
+
+.user-message {
+  background: var(--purple-primary);
+  color: var(--text-white);
+  align-self: flex-end;
+}
+
+.asistente-input {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-white);
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.btn-voice {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 50%;
+  background: var(--purple-primary);
+  color: var(--text-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  flex-shrink: 0;
+}
+
+.btn-voice:hover {
+  background: #3d2268;
+}
+
+.btn-voice:active {
+  transform: scale(0.95);
+}
+
+.btn-voice:focus-visible {
+  outline: 2px solid rgba(75, 44, 129, 0.35);
+  outline-offset: 2px;
+}
+
+.asistente-text-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font-main);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.asistente-text-input:focus {
+  border-color: var(--purple-primary);
+}
+
+.asistente-text-input::placeholder {
+  color: var(--text-muted);
+}
