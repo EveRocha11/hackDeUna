@@ -22,10 +22,25 @@
 
 .chat-message {
   display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.chat-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 0.5px solid #4B2C81;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.chat-bubble {
   max-width: 85%;
   padding: 12px 14px;
   border-radius: var(--radius-md);
-  word-wrap: break-word;
 }
 
 .chat-message p {
@@ -35,15 +50,21 @@
 }
 
 .bot-message {
-  background: var(--purple-light);
-  color: var(--text-primary);
   align-self: flex-start;
 }
 
+.bot-message .chat-bubble {
+  background: var(--purple-light);
+  color: var(--text-primary);
+}
+
 .user-message {
+  align-self: flex-end;
+}
+
+.user-message .chat-bubble {
   background: var(--purple-primary);
   color: var(--text-white);
-  align-self: flex-end;
 }
 
 .asistente-input {
@@ -57,8 +78,8 @@
 }
 
 .btn-voice {
-  width: 50px;
-  height: 50px;
+  width: 42px;
+  height: 42px;
   border: none;
   border-radius: 50%;
   background: var(--purple-primary);
@@ -85,7 +106,7 @@
 }
 
 .asistente-text-input {
-  flex: 1;
+  width: 100%;
   padding: 10px 12px;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
@@ -102,4 +123,49 @@
 
 .asistente-text-input::placeholder {
   color: var(--text-muted);
+}
+
+.asistente-input-field {
+  flex: 1;
+  position: relative;
+}
+
+.asistente-input-field .asistente-text-input {
+  padding-right: 46px;
+}
+
+.btn-send {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: #EDE9F5;
+  color: #4B2C81;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.asistente-text-input:not(:placeholder-shown) + .btn-send {
+  background: #4B2C81;
+  color: var(--text-white);
+}
+
+.btn-send:hover {
+  background: #3d2268;
+}
+
+.btn-send:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.btn-send:focus-visible {
+  outline: 2px solid rgba(75, 44, 129, 0.35);
+  outline-offset: 2px;
 }
