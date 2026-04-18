@@ -193,3 +193,57 @@
 .nav-item.active {
   color: var(--purple-primary);
 }
+
+.nav-icon-wrap--assistant {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  position: relative;
+}
+
+.nav-icon-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 0;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.nav-icon-img--default {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  opacity: 1;
+  transition: opacity 0.12s ease;
+}
+
+.nav-icon-img--pressed {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.nav-item:active .nav-icon-img--default,
+.nav-item:focus-visible .nav-icon-img--default {
+  opacity: 0;
+}
+
+.nav-item:active .nav-icon-img--pressed,
+.nav-item:focus-visible .nav-icon-img--pressed {
+  opacity: 1;
+}
+
+.nav-icon-wrap--assistant + span {
+  margin-top: 4px;
+}
+
+.nav-item.active .nav-label-assistant {
+  margin-top: -1px;
+}
