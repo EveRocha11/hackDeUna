@@ -5,7 +5,7 @@
    ============================================================ */
 
 .splash-screen {
-  background: var(--purple-primary);
+  background: #008081; /*var(--purple-primary);*/
 }
 
 .splash-main {
@@ -27,10 +27,11 @@
 }
 
 .logo {
-  margin: 0;
-  font-size: 56px;
+  font-family: 'Poppins', sans-serif;
   font-weight: 800;
-  letter-spacing: -1px;
+  font-style: italic;
+  letter-spacing: -1px; /* clave */
+  transform: skew(-7deg); /* simula inclinación real */
   color: var(--text-white);
 }
 
@@ -38,7 +39,7 @@
   appearance: none;
   -webkit-appearance: none;
   border: 0;
-  background: #1F2A2E;
+  background: #064A49;
   color: var(--text-white);
   padding: 14px 28px;
   border-radius: 12px;
@@ -46,18 +47,9 @@
   font-weight: 700;
   letter-spacing: 0.2px;
   min-width: 190px;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
   font-family: var(--font-main);
 }
 
-.cta:hover {
-  background: #1a1620;
-}
-
-.cta:active {
-  transform: scale(0.98);
-}
 
 .cta:focus-visible {
   outline: 2px solid rgba(255, 255, 255, 0.90);

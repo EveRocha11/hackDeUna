@@ -58,9 +58,6 @@ function pressKey(key) {
 /* ─ FUNCIONES DE SPLASH.HTML ──────────────── */
 /* ────────────────────────────────────────────────────────── */
 
-function goToOnboarding() {
-  window.location.href = 'onboarding.html';
-}
 
 // Auto-redirect desde splash después de 3 segundos
 (function initSplash() {
