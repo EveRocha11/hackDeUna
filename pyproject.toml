@@ -29,6 +29,7 @@ dev = [
 [project.scripts]
 dataset-generate = "agent.data.generate_dataset:main"
 dataset-validate = "agent.validation.validate_dataset:main"
+evals-build = "agent.evals.build_eval_set:main"
 
 [build-system]
 requires = ["hatchling>=1.27.0"]
