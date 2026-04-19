@@ -60,6 +60,66 @@ Optional environment variables for question refinement inside `evals-build`:
 This package focuses on evaluation artifact creation only.
 Execution/scoring against live model responses will be added in a later milestone.
 
+## Assistant Query API
+The backend exposes a deterministic query endpoint backed by DuckDB analytics.
+
+Endpoint:
+- `POST /assistant/query`
+
+Request body:
+- `question_es` (required)
+- `merchant_id` (optional)
+- `as_of_date` (optional, `YYYY-MM-DD`)
+
+Response body includes:
+- `status` (`ok`, `clarification`, `unsupported`)
+- `intent_id`
+- `answer_es`
+- `facts_payload`
+- `evidence_payload`
+- `intent_source` (`llm`, `rules_fallback`, `rules_unsupported`)
+- `intent_confidence` (nullable)
+- `chart_allowed`
+- `proactive_flags`
+
+Intent routing behavior:
+- Unsupported topics are detected first with deterministic rules.
+- Then a small LLM classifier can map the question to one intent from `intents.yaml`.
+- If LLM fails or confidence is low, fallback rules are used.
+- SQL fact extraction remains deterministic.
+
+Intent classifier environment variables:
+- `INTENT_CLASSIFIER_ENABLED` (default: `true`)
+- `INTENT_CLASSIFIER_MODEL` (default: `gpt-4.1-mini`)
+- `INTENT_CLASSIFIER_TEMPERATURE` (default: `0.0`)
+- `INTENT_CLASSIFIER_TIMEOUT_SECONDS` (default: `5.0`)
+- `INTENT_CLASSIFIER_MIN_CONFIDENCE` (default: `0.65`)
+- `INTENTS_YAML_PATH` (default: `src/agent/semantics/intents.yaml`)
+
+Optional text-to-SQL fallback (long-tail questions):
+- `ENABLE_TEXT2SQL_FALLBACK` (default: `false`)
+- `TEXT2SQL_MODEL` (default: `gpt-4.1-mini`)
+- `TEXT2SQL_TEMPERATURE` (default: `0.0`)
+- `TEXT2SQL_TIMEOUT_SECONDS` (default: `8.0`)
+- `TEXT2SQL_MAX_ROWS` (default: `20`)
+
+Guardrails for text-to-SQL fallback:
+- Only `SELECT` / `WITH ... SELECT` statements are accepted.
+- Blocked keywords: `insert`, `update`, `delete`, `drop`, `alter`, `create`, etc.
+- Query must include the active `merchant_id` filter.
+- Only known tables/columns are allowed.
+
+Quick examples:
+- Supported: `{"question_es":"¿Cuánto gané esta semana?"}`
+- Supported: `{"question_es":"¿Cómo se distribuye mi ingreso por tamaño de venta esta semana?"}`
+- Unsupported: `{"question_es":"¿Cuánto inventario me queda?"}`
+
+Currently supported intents:
+- `income_period`
+- `income_distribution`
+- `income_vs_previous`
+- `unsupported` and `clarification` handling
+
 ## Current question set (17)
 These are the current Spanish question prompts generated for `eval_set_v1`:
 
