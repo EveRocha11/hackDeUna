@@ -1,0 +1,55 @@
+[project]
+name = "deuna-assistant-backend"
+version = "0.1.0"
+description = "Backend MVP for DeUna micro-merchant business assistant"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "duckdb>=1.2.2",
+  "pandas>=2.2.3",
+  "numpy>=2.2.5",
+  "pydantic>=2.11.3",
+  "pydantic-settings>=2.8.1",
+  "python-dotenv>=1.1.0",
+  "pyyaml>=6.0.2",
+  "fastapi>=0.115.12",
+  "uvicorn>=0.34.0",
+  "langchain>=0.3.23",
+  "langchain-openai>=0.3.14",
+  "langsmith>=0.3.31",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.5",
+  "ruff>=0.11.6",
+  "mypy>=1.15.0",
+]
+
+[project.scripts]
+dataset-generate = "agent.data.generate_dataset:main"
+dataset-validate = "agent.validation.validate_dataset:main"
+
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agent", "src/server"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+mypy_path = "src"
