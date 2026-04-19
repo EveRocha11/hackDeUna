@@ -6,6 +6,7 @@ import os
 
 from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
+from langgraph.checkpoint.memory import MemorySaver
 
 from server.langgraph_agent.prompts import DEUNA_AGENT_SYSTEM_PROMPT
 from server.langgraph_agent.tools import (
@@ -39,4 +40,5 @@ graph = create_agent(
     tools=[assistant_capabilities_tool, run_analytics_query_tool, run_sql_analytics_tool],
     system_prompt=DEUNA_AGENT_SYSTEM_PROMPT,
     name="deuna_conversational_agent",
+    checkpointer=MemorySaver(),
 )
