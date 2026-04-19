@@ -8,7 +8,7 @@ const THREAD_ID = 'frontend-chat-1';
 
 async function cargarPreguntas() {
   try {
-    const response = await fetch('../data/Informacion.txt');
+    const response = await fetch('../data/informacion.txt');
     const texto = await response.text();
 
     const preguntas = texto

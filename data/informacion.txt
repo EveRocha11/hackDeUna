@@ -1,6 +1,5 @@
-pregunta 1
-pregunta 2
-pregunta 3
-pregunta 4
-pregunta 5
-pregunta 6
+¿Cuánto vendí esta semana?
+¿Cómo se distribuye mi ingreso de esta semana entre muchas ventas pequeñas y pocas ventas grandes?
+¿Cuánto vendí ayer?
+¿Qué días he vendido más y cuáles menos?
+¿Cómo me fue esta semana en comparación con la anterior?
