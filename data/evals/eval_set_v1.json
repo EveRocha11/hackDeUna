@@ -1,16 +1,16 @@
 {
   "version": "v1",
-  "generated_at": "2026-04-19T04:43:39.693981Z",
+  "generated_at": "2026-04-19T13:07:07.026281Z",
   "merchant_id": "M001",
   "reference_end_date": "2026-04-18",
-  "item_count": 15,
+  "item_count": 17,
   "items": [
     {
       "eval_id": "E01",
       "profile_id": "rosa",
       "persona_id": "rosa",
       "merchant_id": "M001",
-      "question_es": "¿Cuánto gané esta semana?",
+      "question_es": "¿Cuánto vendí esta semana?",
       "expected_intent_id": "income_period",
       "chart_allowed": false,
       "proactive_expected": false,
@@ -41,8 +41,8 @@
       "profile_id": "rosa",
       "persona_id": "rosa",
       "merchant_id": "M001",
-      "question_es": "¿Cuánto vendí esta semana?",
-      "expected_intent_id": "tx_count_period",
+      "question_es": "¿Cómo se distribuye mi ingreso de esta semana entre muchas ventas pequeñas y pocas ventas grandes?",
+      "expected_intent_id": "income_distribution",
       "chart_allowed": false,
       "proactive_expected": false,
       "expected_facts": {
@@ -50,10 +50,18 @@
           "start": "2026-04-13",
           "end": "2026-04-19"
         },
-        "tx_count": 32
+        "tx_count": 32,
+        "small_tx_count": 17,
+        "medium_tx_count": 15,
+        "large_tx_count": 0,
+        "small_income_share_pct": 35.59,
+        "medium_income_share_pct": 64.41,
+        "large_income_share_pct": 0.0,
+        "dominant_pattern": "mixed",
+        "currency": "USD"
       },
       "expected_evidence": {
-        "query_key": "tx_count_period_week",
+        "query_key": "income_distribution_week",
         "params": {
           "merchant_id": "M001",
           "start_date": "2026-04-13",
@@ -61,7 +69,7 @@
         }
       },
       "pass_fail_criteria": {
-        "exact_integer_match": true,
+        "numeric_tolerance": 0.02,
         "must_not_hallucinate": true
       }
     },
@@ -70,7 +78,7 @@
       "profile_id": "rosa",
       "persona_id": "rosa",
       "merchant_id": "M001",
-      "question_es": "¿Cuánto gané ayer?",
+      "question_es": "¿Cuánto vendí ayer?",
       "expected_intent_id": "income_period",
       "chart_allowed": false,
       "proactive_expected": false,
@@ -97,7 +105,7 @@
       "profile_id": "rosa",
       "persona_id": "rosa",
       "merchant_id": "M001",
-      "question_es": "¿Qué días me fue mejor y peor?",
+      "question_es": "¿Qué días vendo más y cuáles vendo menos?",
       "expected_intent_id": "best_worst_day",
       "chart_allowed": false,
       "proactive_expected": false,
@@ -126,7 +134,7 @@
       "profile_id": "miguel",
       "persona_id": "miguel",
       "merchant_id": "M001",
-      "question_es": "¿Cómo me fue respecto a la semana pasada?",
+      "question_es": "¿Cómo me fue esta semana en comparación con la anterior?",
       "expected_intent_id": "income_vs_previous",
       "chart_allowed": false,
       "proactive_expected": true,
@@ -156,7 +164,7 @@
       "profile_id": "daniela",
       "persona_id": "daniela",
       "merchant_id": "M001",
-      "question_es": "¿Cuántos clientes de este mes fueron nuevos y cuántos regresaron?",
+      "question_es": "¿Cuántos clientes nuevos vinieron este mes y cuántos regresaron?",
       "expected_intent_id": "customer_new_vs_returning",
       "chart_allowed": false,
       "proactive_expected": false,
@@ -184,7 +192,7 @@
       "profile_id": "miguel",
       "persona_id": "miguel",
       "merchant_id": "M001",
-      "question_es": "¿Cuáles son mis mejores tres clientes?",
+      "question_es": "¿Quiénes son mis tres clientes más frecuentes de esta semana?",
       "expected_intent_id": "top_customers",
       "chart_allowed": true,
       "proactive_expected": false,
@@ -225,7 +233,7 @@
       "profile_id": "daniela",
       "persona_id": "daniela",
       "merchant_id": "M001",
-      "question_es": "¿Cuántos clientes no volvieron en el último mes?",
+      "question_es": "¿Cuántos clientes no regresaron en el último mes?",
       "expected_intent_id": "inactive_customers",
       "chart_allowed": false,
       "proactive_expected": false,
@@ -249,7 +257,7 @@
       "profile_id": "rosa",
       "persona_id": "rosa",
       "merchant_id": "M001",
-      "question_es": "¿En qué hora vendo más?",
+      "question_es": "¿A qué hora vendo más hoy?",
       "expected_intent_id": "peak_hours",
       "chart_allowed": true,
       "proactive_expected": false,
@@ -276,7 +284,7 @@
       "profile_id": "miguel",
       "persona_id": "miguel",
       "merchant_id": "M001",
-      "question_es": "¿Qué tal les fue a mis vendedores esta semana?",
+      "question_es": "¿Cómo les fue a mis vendedores esta semana?",
       "expected_intent_id": "seller_performance",
       "chart_allowed": true,
       "proactive_expected": false,
@@ -309,7 +317,7 @@
       "profile_id": "rosa",
       "persona_id": "rosa",
       "merchant_id": "M001",
-      "question_es": "¿Cuánto gané por día esta semana?",
+      "question_es": "¿Cuánto vendí cada día esta semana?",
       "expected_intent_id": "income_period",
       "chart_allowed": true,
       "proactive_expected": false,
@@ -360,7 +368,7 @@
       "profile_id": "miguel",
       "persona_id": "miguel",
       "merchant_id": "M001",
-      "question_es": "¿Estoy dependiendo de pocos clientes este mes?",
+      "question_es": "¿Este mes estoy dependiendo de unos pocos clientes?",
       "expected_intent_id": "top_customers",
       "chart_allowed": false,
       "proactive_expected": false,
@@ -383,45 +391,65 @@
     },
     {
       "eval_id": "E13",
-      "profile_id": "carlos",
-      "persona_id": "carlos",
+      "profile_id": "rosa",
+      "persona_id": "rosa",
       "merchant_id": "M001",
-      "question_es": "¿Cuánto inventario me queda?",
-      "expected_intent_id": "unsupported",
+      "question_es": "Esta semana, ¿qué porcentaje de mis ingresos provino de ventas pequeñas, medianas y grandes?",
+      "expected_intent_id": "income_distribution",
       "chart_allowed": false,
       "proactive_expected": false,
       "expected_facts": {
-        "must_refuse": true,
-        "reason": "inventory_not_in_dataset"
+        "period": {
+          "start": "2026-04-13",
+          "end": "2026-04-19"
+        },
+        "small_income_share_pct": 35.59,
+        "medium_income_share_pct": 64.41,
+        "large_income_share_pct": 0.0,
+        "currency": "USD"
       },
       "expected_evidence": {
-        "policy_key": "unsupported_topic_inventory"
+        "query_key": "income_share_by_ticket_size_week",
+        "params": {
+          "merchant_id": "M001",
+          "start_date": "2026-04-13",
+          "end_date": "2026-04-19"
+        }
       },
       "pass_fail_criteria": {
-        "must_refuse_clearly": true,
-        "must_offer_supported_alternative": true,
+        "numeric_tolerance": 0.02,
         "must_not_hallucinate": true
       }
     },
     {
       "eval_id": "E14",
-      "profile_id": "carlos",
-      "persona_id": "carlos",
+      "profile_id": "miguel",
+      "persona_id": "miguel",
       "merchant_id": "M001",
-      "question_es": "¿Cuál fue mi ganancia neta esta semana?",
-      "expected_intent_id": "unsupported",
+      "question_es": "Esta semana, ¿cuántas ventas hiciste de comida en cada categoría: pequeñas, medianas y grandes?",
+      "expected_intent_id": "income_distribution",
       "chart_allowed": false,
       "proactive_expected": false,
       "expected_facts": {
-        "must_refuse": true,
-        "reason": "profit_not_in_dataset"
+        "period": {
+          "start": "2026-04-13",
+          "end": "2026-04-19"
+        },
+        "tx_count": 32,
+        "small_tx_count": 17,
+        "medium_tx_count": 15,
+        "large_tx_count": 0
       },
       "expected_evidence": {
-        "policy_key": "unsupported_topic_profit"
+        "query_key": "tx_count_by_ticket_size_week",
+        "params": {
+          "merchant_id": "M001",
+          "start_date": "2026-04-13",
+          "end_date": "2026-04-19"
+        }
       },
       "pass_fail_criteria": {
-        "must_refuse_clearly": true,
-        "must_offer_supported_alternative": true,
+        "exact_integer_match": true,
         "must_not_hallucinate": true
       }
     },
@@ -430,7 +458,7 @@
       "profile_id": "carlos",
       "persona_id": "carlos",
       "merchant_id": "M001",
-      "question_es": "Dime si esta semana voy mejor o peor que la anterior y qué debería revisar primero.",
+      "question_es": "¿Me puedes decir si esta semana estoy vendiendo mejor o peor que la anterior y qué debería revisar primero?",
       "expected_intent_id": "income_vs_previous",
       "chart_allowed": false,
       "proactive_expected": true,
@@ -453,6 +481,50 @@
       "pass_fail_criteria": {
         "numeric_tolerance": 0.02,
         "must_include_followup_guidance": true,
+        "must_not_hallucinate": true
+      }
+    },
+    {
+      "eval_id": "E16",
+      "profile_id": "carlos",
+      "persona_id": "carlos",
+      "merchant_id": "M001",
+      "question_es": "¿Cuánto inventario tengo disponible hoy?",
+      "expected_intent_id": "unsupported",
+      "chart_allowed": false,
+      "proactive_expected": false,
+      "expected_facts": {
+        "must_refuse": true,
+        "reason": "inventory_not_in_dataset"
+      },
+      "expected_evidence": {
+        "policy_key": "unsupported_topic_inventory"
+      },
+      "pass_fail_criteria": {
+        "must_refuse_clearly": true,
+        "must_offer_supported_alternative": true,
+        "must_not_hallucinate": true
+      }
+    },
+    {
+      "eval_id": "E17",
+      "profile_id": "carlos",
+      "persona_id": "carlos",
+      "merchant_id": "M001",
+      "question_es": "¿Cuánto gané esta semana?",
+      "expected_intent_id": "unsupported",
+      "chart_allowed": false,
+      "proactive_expected": false,
+      "expected_facts": {
+        "must_refuse": true,
+        "reason": "profit_not_in_dataset"
+      },
+      "expected_evidence": {
+        "policy_key": "unsupported_topic_profit"
+      },
+      "pass_fail_criteria": {
+        "must_refuse_clearly": true,
+        "must_offer_supported_alternative": true,
         "must_not_hallucinate": true
       }
     }

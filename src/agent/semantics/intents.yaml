@@ -1,0 +1,114 @@
+timezone: America/Guayaquil
+currency: USD
+week_definition: monday_sunday
+
+metrics:
+  - total_income
+  - tx_count
+  - avg_ticket
+  - unique_customers
+  - new_customers
+  - returning_customers
+  - returning_share
+  - top_customer_share
+  - top_5_customer_share
+  - seller_income
+  - peak_hour_income
+
+dimensions:
+  - day
+  - hour
+  - month
+  - seller
+  - customer
+  - weekday
+
+filters:
+  - seller_id
+  - customer_type
+  - top_n
+
+intents:
+  - id: income_period
+    description: Ingresos para un período dado.
+    required_fields: [time_range]
+    optional_fields: [compare_to]
+    metric_default: total_income
+    chart_allowed: false
+
+  - id: tx_count_period
+    description: Número de transacciones en un período.
+    required_fields: [time_range]
+    optional_fields: []
+    metric_default: tx_count
+    chart_allowed: false
+
+  - id: income_distribution
+    description: Distribución de ingresos por tamaño de venta en un período.
+    required_fields: [time_range]
+    optional_fields: []
+    metric_default: total_income
+    chart_allowed: true
+
+  - id: avg_ticket_period
+    description: Ticket promedio en un período.
+    required_fields: [time_range]
+    optional_fields: []
+    metric_default: avg_ticket
+    chart_allowed: false
+
+  - id: best_worst_day
+    description: Mejor y peor día por ingresos en un período.
+    required_fields: [time_range]
+    optional_fields: []
+    metric_default: total_income
+    chart_allowed: false
+
+  - id: income_vs_previous
+    description: Comparación de ingresos contra el período anterior.
+    required_fields: [time_range]
+    optional_fields: []
+    metric_default: total_income
+    chart_allowed: false
+
+  - id: customer_new_vs_returning
+    description: Clientes nuevos vs recurrentes en un período.
+    required_fields: [time_range]
+    optional_fields: []
+    metric_default: returning_share
+    chart_allowed: false
+
+  - id: top_customers
+    description: Clientes frecuentes o top por visitas o ingresos.
+    required_fields: [time_range]
+    optional_fields: [top_n]
+    metric_default: top_5_customer_share
+    chart_allowed: true
+
+  - id: inactive_customers
+    description: Clientes vistos antes pero no en los últimos N días.
+    required_fields: [time_range]
+    optional_fields: []
+    metric_default: unique_customers
+    chart_allowed: false
+
+  - id: peak_hours
+    description: Horas con mayor ingreso o cantidad de transacciones.
+    required_fields: [time_range]
+    optional_fields: []
+    metric_default: peak_hour_income
+    chart_allowed: true
+
+  - id: seller_performance
+    description: Comparar dueño y vendedores en un período.
+    required_fields: [time_range]
+    optional_fields: [seller_id]
+    metric_default: seller_income
+    chart_allowed: true
+
+unsupported_topics:
+  - profit
+  - inventory
+  - ad_roi
+  - rent
+  - payroll

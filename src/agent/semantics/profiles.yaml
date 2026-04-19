@@ -1,0 +1,57 @@
+profiles:
+  rosa:
+    label: "Rosa"
+    context: "Maneja una tienda pequena de barrio con apoyo de una vendedora."
+    literacy_profile: "Baja alfabetizacion financiera y tecnica"
+    ai_familiarity: "Ninguna"
+    objective: "Entender si su ingreso diario mejora y en que dias le va peor."
+    style_notes:
+      - "Habla simple y directa"
+      - "Prefiere preguntas cortas"
+      - "Usa palabras cotidianas: ganar, vender"
+
+  miguel:
+    label: "Miguel"
+    context: "Opera un puesto de comida con dos vendedores por turnos."
+    literacy_profile: "Baja alfabetizacion tecnica y nociones numericas basicas"
+    ai_familiarity: "Ninguna"
+    objective: "Comparar desempeno entre vendedores e identificar clientes frecuentes."
+    style_notes:
+      - "Tono practico y cercano"
+      - "Preguntas orientadas a accion"
+      - "Evita lenguaje tecnico"
+
+  daniela:
+    label: "Daniela"
+    context: "Trabaja casi siempre sola y controla ingresos de forma manual."
+    literacy_profile: "Baja alfabetizacion financiera"
+    ai_familiarity: "Ninguna"
+    objective: "Detectar tendencias simples y comportamiento de retorno de clientes."
+    style_notes:
+      - "Lenguaje cotidiano"
+      - "Preguntas de clientes nuevos y recurrentes"
+      - "Evita frases largas"
+
+  carlos:
+    label: "Carlos"
+    context: "Comercio de un solo dueno con demanda irregular."
+    literacy_profile: "Baja alfabetizacion tecnica"
+    ai_familiarity: "Ninguna"
+    objective: "Entender caidas de ingresos y decidir acciones concretas."
+    style_notes:
+      - "Pide recomendaciones concretas"
+      - "Quiere explicaciones cortas"
+      - "Acepta cuando no se puede calcular"
+
+global_question_requirements:
+  locale: "es-EC"
+  tone: "informal, simple, cercano"
+  avoid_terms:
+    - "ticket"
+    - "KPI"
+    - "funnel"
+  rules:
+    - "Una sola idea por pregunta"
+    - "Periodos claros: hoy, ayer, semana, mes"
+    - "Evitar jerga tecnica"
+    - "Preferir verbos cotidianos: ganar, vender, volver"

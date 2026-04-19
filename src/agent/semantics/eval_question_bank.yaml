@@ -1,36 +1,3 @@
-profiles:
-  rosa:
-    label: "Rosa"
-    context: "Dueña de tienda de barrio"
-    style_notes:
-      - "Habla simple y directa"
-      - "Prefiere preguntas cortas"
-      - "Usa palabras cotidianas: ganar, vender"
-
-  miguel:
-    label: "Miguel"
-    context: "Dueño de puesto de comida"
-    style_notes:
-      - "Se enfoca en rendimiento"
-      - "Pregunta por clientes y vendedores"
-      - "Tono práctico y cercano"
-
-  daniela:
-    label: "Daniela"
-    context: "Dueña de negocio de belleza"
-    style_notes:
-      - "Preguntas sobre clientes nuevos y retorno"
-      - "Busca tendencias simples"
-      - "Lenguaje cotidiano"
-
-  carlos:
-    label: "Carlos"
-    context: "Dueño de taller pequeño"
-    style_notes:
-      - "Quiere accion concreta"
-      - "Pregunta por alertas y recomendaciones"
-      - "Acepta respuestas de no se puede calcular"
-
 eval_items:
   - eval_id: "E01"
     profile_id: "rosa"
@@ -38,7 +5,7 @@ eval_items:
 
   - eval_id: "E02"
     profile_id: "rosa"
-    question_es: "¿Cuánto vendí esta semana?"
+    question_es: "Quiero entender si mi ingreso de esta semana viene de muchas ventas pequeñas o de pocas ventas grandes. ¿Cómo se distribuye mi ingreso por tamaño de venta?"
 
   - eval_id: "E03"
     profile_id: "rosa"
@@ -81,13 +48,21 @@ eval_items:
     question_es: "¿Estoy dependiendo de pocos clientes este mes?"
 
   - eval_id: "E13"
-    profile_id: "carlos"
-    question_es: "¿Cuánto inventario me queda?"
+    profile_id: "rosa"
+    question_es: "Esta semana, ¿qué porcentaje de mis ingresos vino de ventas pequeñas, medianas y grandes?"
 
   - eval_id: "E14"
-    profile_id: "carlos"
-    question_es: "¿Cuál fue mi ganancia neta esta semana?"
+    profile_id: "miguel"
+    question_es: "Esta semana, ¿cuántas ventas fueron pequeñas, medianas y grandes?"
 
   - eval_id: "E15"
     profile_id: "carlos"
     question_es: "Dime si esta semana voy mejor o peor que la anterior y qué debería revisar primero."
+
+  - eval_id: "E16"
+    profile_id: "carlos"
+    question_es: "¿Cuánto inventario me queda?"
+
+  - eval_id: "E17"
+    profile_id: "carlos"
+    question_es: "¿Cuál fue mi ganancia neta esta semana?"
