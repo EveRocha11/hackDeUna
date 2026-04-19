@@ -219,3 +219,7 @@ __marimo__/
 
 # PDF files
 *.pdf
+
+# Generated dataset artifacts
+data/raw/
+data/duckdb/
