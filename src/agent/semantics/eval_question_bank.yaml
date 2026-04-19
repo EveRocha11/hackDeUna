@@ -1,0 +1,68 @@
+eval_items:
+  - eval_id: "E01"
+    profile_id: "rosa"
+    question_es: "¿Cuánto gané esta semana?"
+
+  - eval_id: "E02"
+    profile_id: "rosa"
+    question_es: "Quiero entender si mi ingreso de esta semana viene de muchas ventas pequeñas o de pocas ventas grandes. ¿Cómo se distribuye mi ingreso por tamaño de venta?"
+
+  - eval_id: "E03"
+    profile_id: "rosa"
+    question_es: "¿Cuánto gané ayer?"
+
+  - eval_id: "E04"
+    profile_id: "rosa"
+    question_es: "¿Qué días me fue mejor y peor?"
+
+  - eval_id: "E05"
+    profile_id: "miguel"
+    question_es: "¿Cómo me fue respecto a la semana pasada?"
+
+  - eval_id: "E06"
+    profile_id: "daniela"
+    question_es: "¿Cuántos clientes de este mes fueron nuevos y cuántos regresaron?"
+
+  - eval_id: "E07"
+    profile_id: "miguel"
+    question_es: "¿Cuáles son mis mejores tres clientes?"
+
+  - eval_id: "E08"
+    profile_id: "daniela"
+    question_es: "¿Cuántos clientes no volvieron en el último mes?"
+
+  - eval_id: "E09"
+    profile_id: "rosa"
+    question_es: "¿En qué hora vendo más?"
+
+  - eval_id: "E10"
+    profile_id: "miguel"
+    question_es: "¿Qué tal les fue a mis vendedores esta semana?"
+
+  - eval_id: "E11"
+    profile_id: "rosa"
+    question_es: "¿Cuánto gané por día esta semana?"
+
+  - eval_id: "E12"
+    profile_id: "miguel"
+    question_es: "¿Estoy dependiendo de pocos clientes este mes?"
+
+  - eval_id: "E13"
+    profile_id: "rosa"
+    question_es: "Esta semana, ¿qué porcentaje de mis ingresos vino de ventas pequeñas, medianas y grandes?"
+
+  - eval_id: "E14"
+    profile_id: "miguel"
+    question_es: "Esta semana, ¿cuántas ventas fueron pequeñas, medianas y grandes?"
+
+  - eval_id: "E15"
+    profile_id: "carlos"
+    question_es: "Dime si esta semana voy mejor o peor que la anterior y qué debería revisar primero."
+
+  - eval_id: "E16"
+    profile_id: "carlos"
+    question_es: "¿Cuánto inventario me queda?"
+
+  - eval_id: "E17"
+    profile_id: "carlos"
+    question_es: "¿Cuál fue mi ganancia neta esta semana?"

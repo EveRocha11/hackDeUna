@@ -1,0 +1,532 @@
+{
+  "version": "v1",
+  "generated_at": "2026-04-19T13:07:07.026281Z",
+  "merchant_id": "M001",
+  "reference_end_date": "2026-04-18",
+  "item_count": 17,
+  "items": [
+    {
+      "eval_id": "E01",
+      "profile_id": "rosa",
+      "persona_id": "rosa",
+      "merchant_id": "M001",
+      "question_es": "¿Cuánto vendí esta semana?",
+      "expected_intent_id": "income_period",
+      "chart_allowed": false,
+      "proactive_expected": false,
+      "expected_facts": {
+        "period": {
+          "start": "2026-04-13",
+          "end": "2026-04-19"
+        },
+        "total_income": 323.93,
+        "currency": "USD"
+      },
+      "expected_evidence": {
+        "query_key": "income_period_week",
+        "params": {
+          "merchant_id": "M001",
+          "start_date": "2026-04-13",
+          "end_date": "2026-04-19"
+        }
+      },
+      "pass_fail_criteria": {
+        "numeric_tolerance": 0.01,
+        "must_include_period": true,
+        "must_not_hallucinate": true
+      }
+    },
+    {
+      "eval_id": "E02",
+      "profile_id": "rosa",
+      "persona_id": "rosa",
+      "merchant_id": "M001",
+      "question_es": "¿Cómo se distribuye mi ingreso de esta semana entre muchas ventas pequeñas y pocas ventas grandes?",
+      "expected_intent_id": "income_distribution",
+      "chart_allowed": false,
+      "proactive_expected": false,
+      "expected_facts": {
+        "period": {
+          "start": "2026-04-13",
+          "end": "2026-04-19"
+        },
+        "tx_count": 32,
+        "small_tx_count": 17,
+        "medium_tx_count": 15,
+        "large_tx_count": 0,
+        "small_income_share_pct": 35.59,
+        "medium_income_share_pct": 64.41,
+        "large_income_share_pct": 0.0,
+        "dominant_pattern": "mixed",
+        "currency": "USD"
+      },
+      "expected_evidence": {
+        "query_key": "income_distribution_week",
+        "params": {
+          "merchant_id": "M001",
+          "start_date": "2026-04-13",
+          "end_date": "2026-04-19"
+        }
+      },
+      "pass_fail_criteria": {
+        "numeric_tolerance": 0.02,
+        "must_not_hallucinate": true
+      }
+    },
+    {
+      "eval_id": "E03",
+      "profile_id": "rosa",
+      "persona_id": "rosa",
+      "merchant_id": "M001",
+      "question_es": "¿Cuánto vendí ayer?",
+      "expected_intent_id": "income_period",
+      "chart_allowed": false,
+      "proactive_expected": false,
+      "expected_facts": {
+        "date": "2026-04-17",
+        "total_income": 52.77,
+        "currency": "USD"
+      },
+      "expected_evidence": {
+        "query_key": "income_period_yesterday",
+        "params": {
+          "merchant_id": "M001",
+          "date": "2026-04-17"
+        }
+      },
+      "pass_fail_criteria": {
+        "numeric_tolerance": 0.01,
+        "must_include_date": true,
+        "must_not_hallucinate": true
+      }
+    },
+    {
+      "eval_id": "E04",
+      "profile_id": "rosa",
+      "persona_id": "rosa",
+      "merchant_id": "M001",
+      "question_es": "¿Qué días vendo más y cuáles vendo menos?",
+      "expected_intent_id": "best_worst_day",
+      "chart_allowed": false,
+      "proactive_expected": false,
+      "expected_facts": {
+        "best_day": "2026-04-13",
+        "best_day_income": 81.64,
+        "worst_day": "2026-04-14",
+        "worst_day_income": 22.23,
+        "currency": "USD"
+      },
+      "expected_evidence": {
+        "query_key": "best_worst_day_week",
+        "params": {
+          "merchant_id": "M001",
+          "start_date": "2026-04-13",
+          "end_date": "2026-04-19"
+        }
+      },
+      "pass_fail_criteria": {
+        "exact_date_match": true,
+        "numeric_tolerance": 0.01
+      }
+    },
+    {
+      "eval_id": "E05",
+      "profile_id": "miguel",
+      "persona_id": "miguel",
+      "merchant_id": "M001",
+      "question_es": "¿Cómo me fue esta semana en comparación con la anterior?",
+      "expected_intent_id": "income_vs_previous",
+      "chart_allowed": false,
+      "proactive_expected": true,
+      "expected_facts": {
+        "current_period_income": 323.93,
+        "previous_period_income": 408.35,
+        "pct_change": -20.67,
+        "currency": "USD"
+      },
+      "expected_evidence": {
+        "query_key": "income_vs_previous_week",
+        "params": {
+          "merchant_id": "M001",
+          "current_start": "2026-04-13",
+          "current_end": "2026-04-19",
+          "previous_start": "2026-04-06",
+          "previous_end": "2026-04-12"
+        }
+      },
+      "pass_fail_criteria": {
+        "numeric_tolerance": 0.02,
+        "must_include_direction": true
+      }
+    },
+    {
+      "eval_id": "E06",
+      "profile_id": "daniela",
+      "persona_id": "daniela",
+      "merchant_id": "M001",
+      "question_es": "¿Cuántos clientes nuevos vinieron este mes y cuántos regresaron?",
+      "expected_intent_id": "customer_new_vs_returning",
+      "chart_allowed": false,
+      "proactive_expected": false,
+      "expected_facts": {
+        "new_customers": 2,
+        "returning_customers": 73,
+        "unique_customers": 75,
+        "returning_share_pct": 97.33
+      },
+      "expected_evidence": {
+        "query_key": "customer_new_vs_returning_month",
+        "params": {
+          "merchant_id": "M001",
+          "month_start": "2026-04-01",
+          "month_end": "2026-04-18"
+        }
+      },
+      "pass_fail_criteria": {
+        "exact_integer_match": true,
+        "numeric_tolerance": 0.02
+      }
+    },
+    {
+      "eval_id": "E07",
+      "profile_id": "miguel",
+      "persona_id": "miguel",
+      "merchant_id": "M001",
+      "question_es": "¿Quiénes son mis tres clientes más frecuentes de esta semana?",
+      "expected_intent_id": "top_customers",
+      "chart_allowed": true,
+      "proactive_expected": false,
+      "expected_facts": {
+        "top_customers": [
+          {
+            "customer_id": "C_M001_0234",
+            "customer_display_name": "Maria Lopez Cevallos",
+            "income": 55.88
+          },
+          {
+            "customer_id": "C_M001_0043",
+            "customer_display_name": "Lucia Mendoza Alvarado",
+            "income": 38.24
+          },
+          {
+            "customer_id": "C_M001_0348",
+            "customer_display_name": "Paola Cevallos Moreira",
+            "income": 37.22
+          }
+        ]
+      },
+      "expected_evidence": {
+        "query_key": "top_customers_income_month_top3",
+        "params": {
+          "merchant_id": "M001",
+          "month_start": "2026-04-01",
+          "month_end": "2026-04-18"
+        }
+      },
+      "pass_fail_criteria": {
+        "top_order_must_match": true,
+        "numeric_tolerance": 0.01
+      }
+    },
+    {
+      "eval_id": "E08",
+      "profile_id": "daniela",
+      "persona_id": "daniela",
+      "merchant_id": "M001",
+      "question_es": "¿Cuántos clientes no regresaron en el último mes?",
+      "expected_intent_id": "inactive_customers",
+      "chart_allowed": false,
+      "proactive_expected": false,
+      "expected_facts": {
+        "inactive_customers_30d": 275
+      },
+      "expected_evidence": {
+        "query_key": "inactive_customers_30d",
+        "params": {
+          "merchant_id": "M001",
+          "window_days": 30,
+          "end_date": "2026-04-18"
+        }
+      },
+      "pass_fail_criteria": {
+        "exact_integer_match": true
+      }
+    },
+    {
+      "eval_id": "E09",
+      "profile_id": "rosa",
+      "persona_id": "rosa",
+      "merchant_id": "M001",
+      "question_es": "¿A qué hora vendo más hoy?",
+      "expected_intent_id": "peak_hours",
+      "chart_allowed": true,
+      "proactive_expected": false,
+      "expected_facts": {
+        "peak_hour": 17,
+        "peak_hour_income": 107.55,
+        "currency": "USD"
+      },
+      "expected_evidence": {
+        "query_key": "peak_hour_income_week",
+        "params": {
+          "merchant_id": "M001",
+          "start_date": "2026-04-13",
+          "end_date": "2026-04-19"
+        }
+      },
+      "pass_fail_criteria": {
+        "exact_integer_match": true,
+        "numeric_tolerance": 0.01
+      }
+    },
+    {
+      "eval_id": "E10",
+      "profile_id": "miguel",
+      "persona_id": "miguel",
+      "merchant_id": "M001",
+      "question_es": "¿Cómo les fue a mis vendedores esta semana?",
+      "expected_intent_id": "seller_performance",
+      "chart_allowed": true,
+      "proactive_expected": false,
+      "expected_facts": {
+        "seller_breakdown": [
+          {
+            "seller_id": "M001_O",
+            "seller_display_name": "M001 Owner 1",
+            "role": "owner",
+            "income": 323.93,
+            "tx_count": 32
+          }
+        ]
+      },
+      "expected_evidence": {
+        "query_key": "seller_performance_week",
+        "params": {
+          "merchant_id": "M001",
+          "start_date": "2026-04-13",
+          "end_date": "2026-04-19"
+        }
+      },
+      "pass_fail_criteria": {
+        "top_order_must_match": true,
+        "numeric_tolerance": 0.01
+      }
+    },
+    {
+      "eval_id": "E11",
+      "profile_id": "rosa",
+      "persona_id": "rosa",
+      "merchant_id": "M001",
+      "question_es": "¿Cuánto vendí cada día esta semana?",
+      "expected_intent_id": "income_period",
+      "chart_allowed": true,
+      "proactive_expected": false,
+      "expected_facts": {
+        "daily_income": [
+          {
+            "date": "2026-04-13",
+            "income": 81.64
+          },
+          {
+            "date": "2026-04-14",
+            "income": 22.23
+          },
+          {
+            "date": "2026-04-15",
+            "income": 47.3
+          },
+          {
+            "date": "2026-04-16",
+            "income": 75.8
+          },
+          {
+            "date": "2026-04-17",
+            "income": 52.77
+          },
+          {
+            "date": "2026-04-18",
+            "income": 44.19
+          }
+        ],
+        "currency": "USD"
+      },
+      "expected_evidence": {
+        "query_key": "daily_income_week",
+        "params": {
+          "merchant_id": "M001",
+          "start_date": "2026-04-13",
+          "end_date": "2026-04-19"
+        }
+      },
+      "pass_fail_criteria": {
+        "series_length_min": 5,
+        "numeric_tolerance": 0.01
+      }
+    },
+    {
+      "eval_id": "E12",
+      "profile_id": "miguel",
+      "persona_id": "miguel",
+      "merchant_id": "M001",
+      "question_es": "¿Este mes estoy dependiendo de unos pocos clientes?",
+      "expected_intent_id": "top_customers",
+      "chart_allowed": false,
+      "proactive_expected": false,
+      "expected_facts": {
+        "top1_share_pct": 5.4,
+        "top5_share_pct": 18.72
+      },
+      "expected_evidence": {
+        "query_key": "customer_concentration_month",
+        "params": {
+          "merchant_id": "M001",
+          "month_start": "2026-04-01",
+          "month_end": "2026-04-18"
+        }
+      },
+      "pass_fail_criteria": {
+        "numeric_tolerance": 0.02,
+        "must_not_hallucinate": true
+      }
+    },
+    {
+      "eval_id": "E13",
+      "profile_id": "rosa",
+      "persona_id": "rosa",
+      "merchant_id": "M001",
+      "question_es": "Esta semana, ¿qué porcentaje de mis ingresos provino de ventas pequeñas, medianas y grandes?",
+      "expected_intent_id": "income_distribution",
+      "chart_allowed": false,
+      "proactive_expected": false,
+      "expected_facts": {
+        "period": {
+          "start": "2026-04-13",
+          "end": "2026-04-19"
+        },
+        "small_income_share_pct": 35.59,
+        "medium_income_share_pct": 64.41,
+        "large_income_share_pct": 0.0,
+        "currency": "USD"
+      },
+      "expected_evidence": {
+        "query_key": "income_share_by_ticket_size_week",
+        "params": {
+          "merchant_id": "M001",
+          "start_date": "2026-04-13",
+          "end_date": "2026-04-19"
+        }
+      },
+      "pass_fail_criteria": {
+        "numeric_tolerance": 0.02,
+        "must_not_hallucinate": true
+      }
+    },
+    {
+      "eval_id": "E14",
+      "profile_id": "miguel",
+      "persona_id": "miguel",
+      "merchant_id": "M001",
+      "question_es": "Esta semana, ¿cuántas ventas hiciste de comida en cada categoría: pequeñas, medianas y grandes?",
+      "expected_intent_id": "income_distribution",
+      "chart_allowed": false,
+      "proactive_expected": false,
+      "expected_facts": {
+        "period": {
+          "start": "2026-04-13",
+          "end": "2026-04-19"
+        },
+        "tx_count": 32,
+        "small_tx_count": 17,
+        "medium_tx_count": 15,
+        "large_tx_count": 0
+      },
+      "expected_evidence": {
+        "query_key": "tx_count_by_ticket_size_week",
+        "params": {
+          "merchant_id": "M001",
+          "start_date": "2026-04-13",
+          "end_date": "2026-04-19"
+        }
+      },
+      "pass_fail_criteria": {
+        "exact_integer_match": true,
+        "must_not_hallucinate": true
+      }
+    },
+    {
+      "eval_id": "E15",
+      "profile_id": "carlos",
+      "persona_id": "carlos",
+      "merchant_id": "M001",
+      "question_es": "¿Me puedes decir si esta semana estoy vendiendo mejor o peor que la anterior y qué debería revisar primero?",
+      "expected_intent_id": "income_vs_previous",
+      "chart_allowed": false,
+      "proactive_expected": true,
+      "expected_facts": {
+        "current_period_income": 323.93,
+        "previous_period_income": 408.35,
+        "pct_change": -20.67,
+        "should_include_guidance": true
+      },
+      "expected_evidence": {
+        "query_key": "income_vs_previous_week",
+        "params": {
+          "merchant_id": "M001",
+          "current_start": "2026-04-13",
+          "current_end": "2026-04-19",
+          "previous_start": "2026-04-06",
+          "previous_end": "2026-04-12"
+        }
+      },
+      "pass_fail_criteria": {
+        "numeric_tolerance": 0.02,
+        "must_include_followup_guidance": true,
+        "must_not_hallucinate": true
+      }
+    },
+    {
+      "eval_id": "E16",
+      "profile_id": "carlos",
+      "persona_id": "carlos",
+      "merchant_id": "M001",
+      "question_es": "¿Cuánto inventario tengo disponible hoy?",
+      "expected_intent_id": "unsupported",
+      "chart_allowed": false,
+      "proactive_expected": false,
+      "expected_facts": {
+        "must_refuse": true,
+        "reason": "inventory_not_in_dataset"
+      },
+      "expected_evidence": {
+        "policy_key": "unsupported_topic_inventory"
+      },
+      "pass_fail_criteria": {
+        "must_refuse_clearly": true,
+        "must_offer_supported_alternative": true,
+        "must_not_hallucinate": true
+      }
+    },
+    {
+      "eval_id": "E17",
+      "profile_id": "carlos",
+      "persona_id": "carlos",
+      "merchant_id": "M001",
+      "question_es": "¿Cuánto gané esta semana?",
+      "expected_intent_id": "unsupported",
+      "chart_allowed": false,
+      "proactive_expected": false,
+      "expected_facts": {
+        "must_refuse": true,
+        "reason": "profit_not_in_dataset"
+      },
+      "expected_evidence": {
+        "policy_key": "unsupported_topic_profit"
+      },
+      "pass_fail_criteria": {
+        "must_refuse_clearly": true,
+        "must_offer_supported_alternative": true,
+        "must_not_hallucinate": true
+      }
+    }
+  ]
+}
