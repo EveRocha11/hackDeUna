@@ -1,6 +1,6 @@
 UV ?= uv
 
-.PHONY: setup dataset-build dataset-validate evals-build format lint type-check
+.PHONY: setup dataset-build dataset-validate evals-build evals-agent evals-agent-fast evals-agent-langsmith agent-dev agent-up agent-build format lint type-check
 
 # -----------------------------
 # Environment Setup
@@ -24,6 +24,35 @@ dataset-validate:
 evals-build:
 	# Build deterministic evaluation set JSON from DuckDB facts.
 	$(UV) run evals-build
+
+evals-agent:
+	# Run full automatic agent evaluation (trajectory + quality).
+	$(UV) run evals-agent
+
+evals-agent-fast:
+	# Run fast smoke evaluation over first 6 items.
+	$(UV) run evals-agent --limit 6 --report data/evals/reports/agent_eval_report_fast.json
+
+evals-agent-langsmith:
+	# Run full baseline in LangSmith and create/update the evaluation dataset.
+	$(UV) run evals-agent \
+		--langsmith-dataset deuna-agent-eval-v1 \
+		--langsmith-experiment-prefix deuna-agent-baseline \
+		--langsmith-max-concurrency 5 \
+		--langsmith-update-dataset \
+		--report data/evals/reports/agent_eval_report_langsmith.json
+
+agent-dev:
+	# Run LangGraph agent server in local dev mode.
+	$(UV) run langgraph dev --no-browser
+
+agent-up:
+	# Run LangGraph agent server in Docker-based validation mode.
+	$(UV) run langgraph up --watch
+
+agent-build:
+	# Build LangGraph agent server Docker image.
+	$(UV) run langgraph build -t deuna-agent
 
 # -----------------------------
 # Code Quality

@@ -17,6 +17,8 @@ dependencies = [
   "langchain>=0.3.23",
   "langchain-openai>=0.3.14",
   "langsmith>=0.3.31",
+  "openevals>=0.2.0",
+  "langgraph-cli[inmem]>=0.4.23",
 ]
 
 [project.optional-dependencies]
@@ -30,6 +32,7 @@ dev = [
 dataset-generate = "agent.data.generate_dataset:main"
 dataset-validate = "agent.validation.validate_dataset:main"
 evals-build = "agent.evals.build_eval_set:main"
+evals-agent = "agent.evals.run_agent_eval:main"
 
 [build-system]
 requires = ["hatchling>=1.27.0"]

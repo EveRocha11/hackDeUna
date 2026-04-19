@@ -442,7 +442,9 @@ def _build_transactions(
         merchant_id = str(merchant["merchant_id"])
         day_weights = _daily_weights(date_index, merchant_id, anomalies)
 
-        merchant_customers = customers[customers["merchant_id"] == merchant_id].reset_index(drop=True)
+        merchant_customers = customers[customers["merchant_id"] == merchant_id].reset_index(
+            drop=True
+        )
         cust_probs = _customer_weights(merchant_customers)
 
         merchant_sellers = sellers[sellers["merchant_id"] == merchant_id].reset_index(drop=True)
@@ -465,7 +467,9 @@ def _build_transactions(
             second = int(rng.integers(0, 60))
 
             day_py = pd.Timestamp(sampled_day).date()
-            occurred_at = datetime.combine(day_py, time(hour=hour, minute=minute, second=second), tz)
+            occurred_at = datetime.combine(
+                day_py, time(hour=hour, minute=minute, second=second), tz
+            )
 
             rows.append(
                 {

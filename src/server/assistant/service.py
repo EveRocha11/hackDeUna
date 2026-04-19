@@ -84,8 +84,12 @@ def load_runtime_config() -> AssistantRuntimeConfig:
         intent_classifier_enabled=_env_bool("INTENT_CLASSIFIER_ENABLED", True),
         intent_classifier_model=os.getenv("INTENT_CLASSIFIER_MODEL", "gpt-4.1-mini"),
         intent_classifier_temperature=float(os.getenv("INTENT_CLASSIFIER_TEMPERATURE", "0.0")),
-        intent_classifier_timeout_seconds=float(os.getenv("INTENT_CLASSIFIER_TIMEOUT_SECONDS", "5.0")),
-        intent_classifier_min_confidence=float(os.getenv("INTENT_CLASSIFIER_MIN_CONFIDENCE", "0.65")),
+        intent_classifier_timeout_seconds=float(
+            os.getenv("INTENT_CLASSIFIER_TIMEOUT_SECONDS", "5.0")
+        ),
+        intent_classifier_min_confidence=float(
+            os.getenv("INTENT_CLASSIFIER_MIN_CONFIDENCE", "0.65")
+        ),
         allowed_intents=load_allowed_intents(intents_path),
         text2sql=TextToSQLConfig(
             enabled=_env_bool("ENABLE_TEXT2SQL_FALLBACK", False),
@@ -97,7 +101,9 @@ def load_runtime_config() -> AssistantRuntimeConfig:
         answer_generator_enabled=_env_bool("ANSWER_GENERATOR_ENABLED", True),
         answer_generator_model=os.getenv("ANSWER_GENERATOR_MODEL", "gpt-4.1-mini"),
         answer_generator_temperature=float(os.getenv("ANSWER_GENERATOR_TEMPERATURE", "0.0")),
-        answer_generator_timeout_seconds=float(os.getenv("ANSWER_GENERATOR_TIMEOUT_SECONDS", "6.0")),
+        answer_generator_timeout_seconds=float(
+            os.getenv("ANSWER_GENERATOR_TIMEOUT_SECONDS", "6.0")
+        ),
         answer_prompt_path=Path(
             os.getenv("ANSWER_PROMPT_PATH", "src/agent/prompts/generate_answer.md")
         ),
@@ -290,10 +296,7 @@ def _build_unsupported_response(
         status="unsupported",
         merchant_id=merchant_id,
         intent_id="unsupported",
-        answer_es=(
-            "Ese dato no está en el dataset actual del MVP. "
-            f"{alternatives}"
-        ),
+        answer_es=(f"Ese dato no está en el dataset actual del MVP. {alternatives}"),
         facts_payload={"reason": reason},
         evidence_payload={"policy_key": f"unsupported_topic_{reason}"},
         intent_source="rules_unsupported",

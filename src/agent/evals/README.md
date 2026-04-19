@@ -65,6 +65,7 @@ The backend exposes a deterministic query endpoint backed by DuckDB analytics.
 
 Endpoint:
 - `POST /assistant/query`
+- `POST /assistant/agent-query` (LangGraph conversational runtime)
 
 Request body:
 - `question_es` (required)
@@ -115,6 +116,21 @@ Guardrails for text-to-SQL fallback:
 - Blocked keywords: `insert`, `update`, `delete`, `drop`, `alter`, `create`, etc.
 - Query must include the active `merchant_id` filter.
 - Only known tables/columns are allowed.
+
+LangGraph runtime:
+- Graph path: `src/server/langgraph_agent/graph.py:graph`
+- Configuration file: `langgraph.json`
+- Local dev command: `make agent-dev`
+- Docker validation command: `make agent-up`
+
+Automatic agent evaluation:
+- Runner: `src/agent/evals/run_agent_eval.py`
+- Full run: `make evals-agent`
+- Fast smoke run: `make evals-agent-fast`
+- Report output directory: `data/evals/reports/`
+- Scoring dimensions in v1:
+	- trajectory match (tool usage)
+	- response quality (LLM-as-judge)
 
 Quick examples:
 - Supported: `{"question_es":"¿Cuánto gané esta semana?"}`

@@ -137,6 +137,7 @@ ALLOWED_FUNCTIONS: tuple[str, ...] = (
     "nullif",
     "cast",
     "extract",
+    "date_part",
     "round",
     "date_trunc",
     "lower",
@@ -270,6 +271,64 @@ def _build_sql_prompt(question_es: str, merchant_id: str, as_of_date: date, max_
     )
 
 
+def execute_guarded_sql(
+    *,
+    conn: duckdb.DuckDBPyConnection,
+    sql: str,
+    merchant_id: str,
+    max_rows: int,
+) -> TextToSQLResult | None:
+    """Execute SQL only if it passes strict safety and schema guardrails.
+
+    Args:
+        conn: Active DuckDB read-only connection.
+        sql: Candidate SQL query.
+        merchant_id: Merchant id required in SQL filter.
+        max_rows: Maximum number of rows to return.
+
+    Returns:
+        TextToSQLResult | None: Result payload if execution succeeds, otherwise None.
+
+    Raises:
+        None.
+    """
+    normalized_sql = _normalize_sql(sql)
+    if not _validate_sql(normalized_sql, merchant_id):
+        return None
+
+    try:
+        rows = conn.execute(normalized_sql).fetchmany(max_rows)
+        columns = [desc[0] for desc in (conn.description or [])]
+    except Exception:
+        repaired_sql = _normalize_sql(_repair_occurred_at_date_comparisons(normalized_sql))
+        if repaired_sql == normalized_sql or not _validate_sql(repaired_sql, merchant_id):
+            return None
+        try:
+            rows = conn.execute(repaired_sql).fetchmany(max_rows)
+            columns = [desc[0] for desc in (conn.description or [])]
+            normalized_sql = repaired_sql
+        except Exception:
+            return None
+
+    if not rows:
+        answer = "No encontré datos para esa consulta en el período o filtros solicitados."
+    elif len(rows) == 1 and len(rows[0]) == 1:
+        value = rows[0][0]
+        answer = f"El resultado es: {value}."
+    else:
+        answer = (
+            f"Encontré {len(rows)} filas relevantes. Te comparto una vista resumida "
+            "en el payload estructurado."
+        )
+
+    return TextToSQLResult(
+        sql=normalized_sql,
+        answer_es=answer,
+        rows=[list(row) for row in rows],
+        columns=columns,
+    )
+
+
 def run_text_to_sql_fallback(
     *,
     conn: duckdb.DuckDBPyConnection,
@@ -316,38 +375,9 @@ def run_text_to_sql_fallback(
     except Exception:
         return None
 
-    sql = _normalize_sql(draft.sql)
-    if not _validate_sql(sql, merchant_id):
-        return None
-
-    try:
-        rows = conn.execute(sql).fetchmany(config.max_rows)
-        columns = [desc[0] for desc in (conn.description or [])]
-    except Exception:
-        repaired_sql = _normalize_sql(_repair_occurred_at_date_comparisons(sql))
-        if repaired_sql == sql or not _validate_sql(repaired_sql, merchant_id):
-            return None
-        try:
-            rows = conn.execute(repaired_sql).fetchmany(config.max_rows)
-            columns = [desc[0] for desc in (conn.description or [])]
-            sql = repaired_sql
-        except Exception:
-            return None
-
-    if not rows:
-        answer = "No encontré datos para esa consulta en el período o filtros solicitados."
-    elif len(rows) == 1 and len(rows[0]) == 1:
-        value = rows[0][0]
-        answer = f"El resultado es: {value}."
-    else:
-        answer = (
-            f"Encontré {len(rows)} filas relevantes. Te comparto una vista resumida "
-            "en el payload estructurado."
-        )
-
-    return TextToSQLResult(
-        sql=sql,
-        answer_es=answer,
-        rows=[list(row) for row in rows],
-        columns=columns,
+    return execute_guarded_sql(
+        conn=conn,
+        sql=draft.sql,
+        merchant_id=merchant_id,
+        max_rows=config.max_rows,
     )

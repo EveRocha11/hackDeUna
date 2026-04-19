@@ -174,7 +174,9 @@ def _run_duckdb_checks(config: ValidationConfig) -> dict[str, object]:
             WHERE c.customer_id IS NULL
             """
         ).fetchone()[0]
-        invalid_amount = conn.execute("SELECT COUNT(*) FROM transactions WHERE amount <= 0").fetchone()[0]
+        invalid_amount = conn.execute(
+            "SELECT COUNT(*) FROM transactions WHERE amount <= 0"
+        ).fetchone()[0]
         invalid_currency = conn.execute(
             "SELECT COUNT(*) FROM transactions WHERE currency <> ?",
             [config.expected_currency],
@@ -236,7 +238,8 @@ def _run_duckdb_checks(config: ValidationConfig) -> dict[str, object]:
                     {"merchant_id": row[0], "tx_count": int(row[1])} for row in tx_count_by_merchant
                 ],
                 "top_customer_share": [
-                    {"merchant_id": row[0], "top1_share": float(row[1])} for row in top_customer_share
+                    {"merchant_id": row[0], "top1_share": float(row[1])}
+                    for row in top_customer_share
                 ],
             }
         )

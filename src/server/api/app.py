@@ -5,9 +5,16 @@ from __future__ import annotations
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi import HTTPException
+from langchain_core.messages import AIMessage, BaseMessage
 
-from server.assistant.models import AssistantQueryRequest, AssistantQueryResponse
+from server.assistant.models import (
+    AgentQueryRequest,
+    AgentQueryResponse,
+    AssistantQueryRequest,
+    AssistantQueryResponse,
+)
 from server.assistant.service import execute_assistant_query, load_runtime_config
+from server.langgraph_agent.graph import graph
 
 load_dotenv()
 app = FastAPI(title="DeUna Assistant Backend", version="0.1.0")
@@ -47,3 +54,51 @@ def assistant_query(payload: AssistantQueryRequest) -> AssistantQueryResponse:
         return execute_assistant_query(payload, runtime_config)
     except Exception as exc:  # pragma: no cover
         raise HTTPException(status_code=500, detail=f"assistant_query_failed: {exc}") from exc
+
+
+@app.post("/assistant/agent-query", response_model=AgentQueryResponse)
+def assistant_agent_query(payload: AgentQueryRequest) -> AgentQueryResponse:
+    """Resolve one query using LangGraph create_agent runtime.
+
+    Args:
+        payload: User query payload.
+
+    Returns:
+        AgentQueryResponse: Conversational agent result payload.
+
+    Raises:
+        HTTPException: If runtime invocation fails.
+    """
+    thread_id = payload.thread_id or "default-thread"
+    try:
+        run_output = graph.invoke(
+            {"messages": [{"role": "user", "content": payload.question_es}]},
+            config={"configurable": {"thread_id": thread_id}},
+        )
+    except Exception as exc:  # pragma: no cover
+        raise HTTPException(status_code=500, detail=f"agent_query_failed: {exc}") from exc
+
+    messages_raw = run_output.get("messages")
+    if not isinstance(messages_raw, list):
+        raise HTTPException(status_code=500, detail="agent_query_failed: missing messages")
+
+    messages: list[BaseMessage] = messages_raw
+    answer_es = ""
+    tool_call_names: list[str] = []
+
+    for msg in messages:
+        if isinstance(msg, AIMessage):
+            for call in msg.tool_calls:
+                name = call.get("name")
+                if isinstance(name, str) and name:
+                    tool_call_names.append(name)
+    for msg in reversed(messages):
+        if isinstance(msg, AIMessage) and isinstance(msg.content, str) and msg.content.strip():
+            answer_es = msg.content.strip()
+            break
+
+    return AgentQueryResponse(
+        answer_es=answer_es,
+        tool_call_names=tool_call_names,
+        message_count=len(messages),
+    )

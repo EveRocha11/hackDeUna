@@ -72,7 +72,9 @@ def _load_config(cli_merchant_id: str | None) -> EvalBuildConfig:
     Raises:
         ValueError: If date parsing fails.
     """
-    merchant_id = cli_merchant_id or os.getenv("EVAL_MERCHANT_ID") or os.getenv("DEUNA_MERCHANT_ID", "M001")
+    merchant_id = (
+        cli_merchant_id or os.getenv("EVAL_MERCHANT_ID") or os.getenv("DEUNA_MERCHANT_ID", "M001")
+    )
     end_date = date.fromisoformat(os.getenv("DATASET_END_DATE", "2026-04-18"))
 
     return EvalBuildConfig(
@@ -238,10 +240,14 @@ def _refine_question_with_profile_context(
         profile_meta = {}
 
     style_notes = profile_meta.get("style_notes", [])
-    style_text = "\n".join(f"- {str(note)}" for note in style_notes) if isinstance(style_notes, list) else ""
+    style_text = (
+        "\n".join(f"- {str(note)}" for note in style_notes) if isinstance(style_notes, list) else ""
+    )
 
     avoid_terms = requirements.get("avoid_terms", [])
-    avoid_text = ", ".join(str(term) for term in avoid_terms) if isinstance(avoid_terms, list) else ""
+    avoid_text = (
+        ", ".join(str(term) for term in avoid_terms) if isinstance(avoid_terms, list) else ""
+    )
 
     rules = requirements.get("rules", [])
     rules_text = "\n".join(f"- {str(rule)}" for rule in rules) if isinstance(rules, list) else ""
@@ -304,6 +310,12 @@ def _refine_question_catalog_with_llm(
     refined_catalog: dict[str, dict[str, str]] = {}
     for eval_id, meta in catalog.items():
         profile_id = meta["profile_id"]
+        if eval_id in {"E16", "E17"}:
+            refined_catalog[eval_id] = {
+                "profile_id": profile_id,
+                "question_es": meta["question_es"],
+            }
+            continue
         refined_question = _refine_question_with_profile_context(
             question_es=meta["question_es"],
             profile_id=profile_id,
@@ -369,7 +381,9 @@ def _as_int(value: object) -> int:
     raise TypeError(f"Expected integer-like value, got: {type(value)!r}")
 
 
-def _query_one(conn: duckdb.DuckDBPyConnection, sql: str, params: list[object]) -> tuple[object, ...]:
+def _query_one(
+    conn: duckdb.DuckDBPyConnection, sql: str, params: list[object]
+) -> tuple[object, ...]:
     """Execute a query expected to return one row.
 
     Args:
@@ -410,7 +424,9 @@ def _build_items(config: EvalBuildConfig) -> list[dict[str, object]]:
     question_catalog = _load_questions_bank(config.questions_bank_path)
     if config.refine_questions_with_llm:
         profiles_payload = _load_profiles_payload(config.profiles_path)
-        question_catalog = _refine_question_catalog_with_llm(question_catalog, profiles_payload, config)
+        question_catalog = _refine_question_catalog_with_llm(
+            question_catalog, profiles_payload, config
+        )
 
     items: list[dict[str, object]] = []
 
@@ -443,7 +459,11 @@ def _build_items(config: EvalBuildConfig) -> list[dict[str, object]]:
                 },
                 "expected_evidence": {
                     "query_key": "income_period_week",
-                    "params": {"merchant_id": merchant_id, "start_date": week_start.isoformat(), "end_date": week_end.isoformat()},
+                    "params": {
+                        "merchant_id": merchant_id,
+                        "start_date": week_start.isoformat(),
+                        "end_date": week_end.isoformat(),
+                    },
                 },
                 "pass_fail_criteria": {
                     "numeric_tolerance": 0.01,
@@ -469,7 +489,7 @@ def _build_items(config: EvalBuildConfig) -> list[dict[str, object]]:
             WHERE merchant_id = ?
               AND CAST(occurred_at AS DATE) BETWEEN ? AND ?
             """,
-                        [merchant_id, week_start.isoformat(), week_end.isoformat()],
+            [merchant_id, week_start.isoformat(), week_end.isoformat()],
         )
         tx_count_week = _as_int(dist_row[0])
         small_tx_count = _as_int(dist_row[1])
@@ -510,7 +530,11 @@ def _build_items(config: EvalBuildConfig) -> list[dict[str, object]]:
                 },
                 "expected_evidence": {
                     "query_key": "income_distribution_week",
-                    "params": {"merchant_id": merchant_id, "start_date": week_start.isoformat(), "end_date": week_end.isoformat()},
+                    "params": {
+                        "merchant_id": merchant_id,
+                        "start_date": week_start.isoformat(),
+                        "end_date": week_end.isoformat(),
+                    },
                 },
                 "pass_fail_criteria": {
                     "numeric_tolerance": 0.02,
@@ -596,7 +620,11 @@ def _build_items(config: EvalBuildConfig) -> list[dict[str, object]]:
                 },
                 "expected_evidence": {
                     "query_key": "best_worst_day_week",
-                    "params": {"merchant_id": merchant_id, "start_date": week_start.isoformat(), "end_date": week_end.isoformat()},
+                    "params": {
+                        "merchant_id": merchant_id,
+                        "start_date": week_start.isoformat(),
+                        "end_date": week_end.isoformat(),
+                    },
                 },
                 "pass_fail_criteria": {
                     "exact_date_match": True,
@@ -701,7 +729,9 @@ def _build_items(config: EvalBuildConfig) -> list[dict[str, object]]:
         )
         unique_customers = _as_int(customer_row[2])
         returning_share = (
-            0.0 if unique_customers == 0 else round((_as_int(customer_row[1]) / unique_customers) * 100, 2)
+            0.0
+            if unique_customers == 0
+            else round((_as_int(customer_row[1]) / unique_customers) * 100, 2)
         )
         items.append(
             {
@@ -824,7 +854,11 @@ def _build_items(config: EvalBuildConfig) -> list[dict[str, object]]:
                 "expected_facts": {"inactive_customers_30d": _as_int(inactive_count)},
                 "expected_evidence": {
                     "query_key": "inactive_customers_30d",
-                    "params": {"merchant_id": merchant_id, "window_days": 30, "end_date": config.end_date.isoformat()},
+                    "params": {
+                        "merchant_id": merchant_id,
+                        "window_days": 30,
+                        "end_date": config.end_date.isoformat(),
+                    },
                 },
                 "pass_fail_criteria": {
                     "exact_integer_match": True,
@@ -864,7 +898,11 @@ def _build_items(config: EvalBuildConfig) -> list[dict[str, object]]:
                 },
                 "expected_evidence": {
                     "query_key": "peak_hour_income_week",
-                    "params": {"merchant_id": merchant_id, "start_date": week_start.isoformat(), "end_date": week_end.isoformat()},
+                    "params": {
+                        "merchant_id": merchant_id,
+                        "start_date": week_start.isoformat(),
+                        "end_date": week_end.isoformat(),
+                    },
                 },
                 "pass_fail_criteria": {
                     "exact_integer_match": True,
@@ -910,7 +948,11 @@ def _build_items(config: EvalBuildConfig) -> list[dict[str, object]]:
                 },
                 "expected_evidence": {
                     "query_key": "seller_performance_week",
-                    "params": {"merchant_id": merchant_id, "start_date": week_start.isoformat(), "end_date": week_end.isoformat()},
+                    "params": {
+                        "merchant_id": merchant_id,
+                        "start_date": week_start.isoformat(),
+                        "end_date": week_end.isoformat(),
+                    },
                 },
                 "pass_fail_criteria": {
                     "top_order_must_match": True,
@@ -942,12 +984,18 @@ def _build_items(config: EvalBuildConfig) -> list[dict[str, object]]:
                 "chart_allowed": True,
                 "proactive_expected": False,
                 "expected_facts": {
-                    "daily_income": [{"date": str(row[0]), "income": _money(row[1])} for row in trend_rows],
+                    "daily_income": [
+                        {"date": str(row[0]), "income": _money(row[1])} for row in trend_rows
+                    ],
                     "currency": "USD",
                 },
                 "expected_evidence": {
                     "query_key": "daily_income_week",
-                    "params": {"merchant_id": merchant_id, "start_date": week_start.isoformat(), "end_date": week_end.isoformat()},
+                    "params": {
+                        "merchant_id": merchant_id,
+                        "start_date": week_start.isoformat(),
+                        "end_date": week_end.isoformat(),
+                    },
                 },
                 "pass_fail_criteria": {
                     "series_length_min": 5,
@@ -995,7 +1043,11 @@ def _build_items(config: EvalBuildConfig) -> list[dict[str, object]]:
                 },
                 "expected_evidence": {
                     "query_key": "customer_concentration_month",
-                    "params": {"merchant_id": merchant_id, "month_start": month_start.isoformat(), "month_end": config.end_date.isoformat()},
+                    "params": {
+                        "merchant_id": merchant_id,
+                        "month_start": month_start.isoformat(),
+                        "month_end": config.end_date.isoformat(),
+                    },
                 },
                 "pass_fail_criteria": {
                     "numeric_tolerance": 0.02,
@@ -1024,7 +1076,11 @@ def _build_items(config: EvalBuildConfig) -> list[dict[str, object]]:
                 },
                 "expected_evidence": {
                     "query_key": "income_share_by_ticket_size_week",
-                    "params": {"merchant_id": merchant_id, "start_date": week_start.isoformat(), "end_date": week_end.isoformat()},
+                    "params": {
+                        "merchant_id": merchant_id,
+                        "start_date": week_start.isoformat(),
+                        "end_date": week_end.isoformat(),
+                    },
                 },
                 "pass_fail_criteria": {
                     "numeric_tolerance": 0.02,
@@ -1053,7 +1109,11 @@ def _build_items(config: EvalBuildConfig) -> list[dict[str, object]]:
                 },
                 "expected_evidence": {
                     "query_key": "tx_count_by_ticket_size_week",
-                    "params": {"merchant_id": merchant_id, "start_date": week_start.isoformat(), "end_date": week_end.isoformat()},
+                    "params": {
+                        "merchant_id": merchant_id,
+                        "start_date": week_start.isoformat(),
+                        "end_date": week_end.isoformat(),
+                    },
                 },
                 "pass_fail_criteria": {
                     "exact_integer_match": True,

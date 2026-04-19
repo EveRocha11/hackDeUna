@@ -1,0 +1,412 @@
+version: v1
+
+defaults:
+  currency: USD
+  timezone: America/Guayaquil
+
+unsupported_topics:
+  - inventory
+  - profit
+  - ad_roi
+  - rent
+  - payroll
+
+queries:
+  - query_key: income_period_total_week
+    intent_id: income_period
+    status: enabled
+    description_es: Ingresos para un periodo.
+    match_any_keywords:
+      - cuanto
+      - vendi
+      - gane
+    required_slots:
+      - start_date
+      - end_date
+    optional_slots: []
+    capability_tags:
+      - ingresos
+      - periodos
+    chart_allowed: false
+    response_schema:
+      - total_income
+      - currency
+      - period
+    sql_template: |
+      SELECT COALESCE(SUM(amount), 0) AS total_income
+      FROM transactions
+      WHERE merchant_id = '{merchant_id}'
+        AND CAST(occurred_at AS DATE) BETWEEN DATE '{start_date}' AND DATE '{end_date}'
+
+  - query_key: daily_income_week
+    intent_id: income_period
+    status: enabled
+    description_es: Ingresos diarios para un periodo.
+    match_any_keywords:
+      - cada dia
+      - por dia
+      - diario
+    required_slots:
+      - start_date
+      - end_date
+    optional_slots: []
+    capability_tags:
+      - ingresos
+      - tendencia
+    chart_allowed: true
+    response_schema:
+      - date
+      - income
+      - currency
+    sql_template: |
+      SELECT CAST(occurred_at AS DATE) AS date, SUM(amount) AS income
+      FROM transactions
+      WHERE merchant_id = '{merchant_id}'
+        AND CAST(occurred_at AS DATE) BETWEEN DATE '{start_date}' AND DATE '{end_date}'
+      GROUP BY 1
+      ORDER BY 1 ASC
+
+  - query_key: income_share_by_ticket_size_week
+    intent_id: income_distribution
+    status: enabled
+    description_es: Distribucion de ingresos por tamano de venta.
+    match_any_keywords:
+      - porcentaje
+      - distribuye
+      - distribucion
+    required_slots:
+      - start_date
+      - end_date
+    optional_slots: []
+    capability_tags:
+      - ingresos
+      - distribucion
+    chart_allowed: true
+    response_schema:
+      - tx_count
+      - small_tx_count
+      - medium_tx_count
+      - large_tx_count
+      - small_income_share_pct
+      - medium_income_share_pct
+      - large_income_share_pct
+    sql_template: |
+      SELECT
+        COUNT(*) AS tx_count,
+        SUM(CASE WHEN amount <= 10 THEN 1 ELSE 0 END) AS small_tx_count,
+        SUM(CASE WHEN amount > 10 AND amount <= 25 THEN 1 ELSE 0 END) AS medium_tx_count,
+        SUM(CASE WHEN amount > 25 THEN 1 ELSE 0 END) AS large_tx_count,
+        COALESCE(
+          SUM(CASE WHEN amount <= 10 THEN amount ELSE 0 END) / NULLIF(SUM(amount), 0),
+          0
+        ) * 100 AS small_income_share_pct,
+        COALESCE(
+          SUM(CASE WHEN amount > 10 AND amount <= 25 THEN amount ELSE 0 END) / NULLIF(SUM(amount), 0),
+          0
+        ) * 100 AS medium_income_share_pct,
+        COALESCE(
+          SUM(CASE WHEN amount > 25 THEN amount ELSE 0 END) / NULLIF(SUM(amount), 0),
+          0
+        ) * 100 AS large_income_share_pct
+      FROM transactions
+      WHERE merchant_id = '{merchant_id}'
+        AND CAST(occurred_at AS DATE) BETWEEN DATE '{start_date}' AND DATE '{end_date}'
+
+  - query_key: tx_count_by_ticket_size_week
+    intent_id: income_distribution
+    status: enabled
+    description_es: Conteo de ventas por tamano de ticket en el periodo.
+    match_any_keywords:
+      - cuantas ventas
+      - cuantas
+      - cantidad
+    required_slots:
+      - start_date
+      - end_date
+    optional_slots: []
+    capability_tags:
+      - ingresos
+      - distribucion
+    chart_allowed: false
+    response_schema:
+      - tx_count
+      - small_tx_count
+      - medium_tx_count
+      - large_tx_count
+    sql_template: |
+      SELECT
+        COUNT(*) AS tx_count,
+        SUM(CASE WHEN amount <= 10 THEN 1 ELSE 0 END) AS small_tx_count,
+        SUM(CASE WHEN amount > 10 AND amount <= 25 THEN 1 ELSE 0 END) AS medium_tx_count,
+        SUM(CASE WHEN amount > 25 THEN 1 ELSE 0 END) AS large_tx_count
+      FROM transactions
+      WHERE merchant_id = '{merchant_id}'
+        AND CAST(occurred_at AS DATE) BETWEEN DATE '{start_date}' AND DATE '{end_date}'
+
+  - query_key: income_vs_previous_week
+    intent_id: income_vs_previous
+    status: enabled
+    description_es: Comparacion de ingresos del periodo actual contra el anterior.
+    required_slots:
+      - current_start
+      - current_end
+      - previous_start
+      - previous_end
+    optional_slots: []
+    capability_tags:
+      - ingresos
+      - comparacion
+    chart_allowed: false
+    response_schema:
+      - current_income
+      - previous_income
+      - pct_change
+    sql_template: |
+      WITH current_p AS (
+        SELECT COALESCE(SUM(amount), 0) AS income
+        FROM transactions
+        WHERE merchant_id = '{merchant_id}'
+          AND CAST(occurred_at AS DATE) BETWEEN DATE '{current_start}' AND DATE '{current_end}'
+      ), previous_p AS (
+        SELECT COALESCE(SUM(amount), 0) AS income
+        FROM transactions
+        WHERE merchant_id = '{merchant_id}'
+          AND CAST(occurred_at AS DATE) BETWEEN DATE '{previous_start}' AND DATE '{previous_end}'
+      )
+      SELECT
+        current_p.income AS current_income,
+        previous_p.income AS previous_income,
+        COALESCE(((current_p.income - previous_p.income) / NULLIF(previous_p.income, 0)) * 100, NULL) AS pct_change
+      FROM current_p, previous_p
+
+  - query_key: best_worst_day_week
+    intent_id: best_worst_day
+    status: enabled
+    description_es: Mejor y peor dia por ingresos.
+    required_slots:
+      - start_date
+      - end_date
+    optional_slots: []
+    capability_tags:
+      - ingresos
+      - dias
+    chart_allowed: false
+    response_schema:
+      - best_day
+      - best_income
+      - worst_day
+      - worst_income
+    sql_template: |
+      WITH daily AS (
+        SELECT CAST(occurred_at AS DATE) AS d, SUM(amount) AS income
+        FROM transactions
+        WHERE merchant_id = '{merchant_id}'
+          AND CAST(occurred_at AS DATE) BETWEEN DATE '{start_date}' AND DATE '{end_date}'
+        GROUP BY 1
+      )
+      SELECT
+        (SELECT d FROM daily ORDER BY income DESC, d ASC LIMIT 1) AS best_day,
+        (SELECT income FROM daily ORDER BY income DESC, d ASC LIMIT 1) AS best_income,
+        (SELECT d FROM daily ORDER BY income ASC, d ASC LIMIT 1) AS worst_day,
+        (SELECT income FROM daily ORDER BY income ASC, d ASC LIMIT 1) AS worst_income
+
+  - query_key: customer_new_vs_returning_month
+    intent_id: customer_new_vs_returning
+    status: enabled
+    description_es: Clientes nuevos vs recurrentes.
+    required_slots:
+      - start_date
+      - end_date
+    optional_slots: []
+    capability_tags:
+      - clientes
+    chart_allowed: false
+    response_schema:
+      - new_customers
+      - returning_customers
+      - unique_customers
+    sql_template: |
+      WITH month_tx AS (
+        SELECT customer_id
+        FROM transactions
+        WHERE merchant_id = '{merchant_id}'
+          AND CAST(occurred_at AS DATE) BETWEEN DATE '{start_date}' AND DATE '{end_date}'
+      ), first_seen AS (
+        SELECT customer_id, MIN(CAST(occurred_at AS DATE)) AS first_purchase
+        FROM transactions
+        WHERE merchant_id = '{merchant_id}'
+        GROUP BY customer_id
+      )
+      SELECT
+        COUNT(DISTINCT CASE WHEN first_purchase BETWEEN DATE '{start_date}' AND DATE '{end_date}' THEN month_tx.customer_id END) AS new_customers,
+        COUNT(DISTINCT CASE WHEN first_purchase < DATE '{start_date}' THEN month_tx.customer_id END) AS returning_customers,
+        COUNT(DISTINCT month_tx.customer_id) AS unique_customers
+      FROM month_tx
+      JOIN first_seen ON month_tx.customer_id = first_seen.customer_id
+
+  - query_key: top_customers_income_month_top3
+    intent_id: top_customers
+    status: enabled
+    description_es: Top clientes por ingresos.
+    match_any_keywords:
+      - mejores tres
+      - tres clientes
+      - top
+      - frecuentes
+    required_slots:
+      - start_date
+      - end_date
+    optional_slots:
+      - top_n
+    capability_tags:
+      - clientes
+      - ranking
+    chart_allowed: true
+    response_schema:
+      - customer_id
+      - customer_display_name
+      - income
+    sql_template: |
+      SELECT c.customer_id, c.customer_display_name, SUM(t.amount) AS income
+      FROM transactions t
+      JOIN customers c ON t.customer_id = c.customer_id AND t.merchant_id = c.merchant_id
+      WHERE t.merchant_id = '{merchant_id}'
+        AND CAST(t.occurred_at AS DATE) BETWEEN DATE '{start_date}' AND DATE '{end_date}'
+      GROUP BY c.customer_id, c.customer_display_name
+      ORDER BY income DESC, c.customer_id ASC
+      LIMIT 3
+
+  - query_key: customer_concentration_month
+    intent_id: top_customers
+    status: enabled
+    description_es: Concentracion de ingresos en clientes top.
+    match_any_keywords:
+      - dependiendo de pocos
+      - pocos clientes
+      - concentracion
+    required_slots:
+      - start_date
+      - end_date
+    optional_slots: []
+    capability_tags:
+      - clientes
+      - concentracion
+    chart_allowed: false
+    response_schema:
+      - top1_share
+      - top5_share
+    sql_template: |
+      WITH ci AS (
+        SELECT customer_id, SUM(amount) AS income
+        FROM transactions
+        WHERE merchant_id = '{merchant_id}'
+          AND CAST(occurred_at AS DATE) BETWEEN DATE '{start_date}' AND DATE '{end_date}'
+        GROUP BY customer_id
+      ), totals AS (
+        SELECT COALESCE(SUM(income), 0) AS total_income
+        FROM ci
+      ), top1_list AS (
+        SELECT income
+        FROM ci
+        ORDER BY income DESC
+        LIMIT 1
+      ), top5_list AS (
+        SELECT income
+        FROM ci
+        ORDER BY income DESC
+        LIMIT 5
+      ), top1 AS (
+        SELECT COALESCE(SUM(income), 0) AS top1_income
+        FROM top1_list
+      ), top5 AS (
+        SELECT COALESCE(SUM(income), 0) AS top5_income
+        FROM top5_list
+      )
+      SELECT
+        COALESCE(top1.top1_income / NULLIF(totals.total_income, 0), 0) * 100 AS top1_share,
+        COALESCE(top5.top5_income / NULLIF(totals.total_income, 0), 0) * 100 AS top5_share
+      FROM totals, top1, top5
+
+  - query_key: inactive_customers_30d
+    intent_id: inactive_customers
+    status: enabled
+    description_es: Clientes inactivos en ventana reciente.
+    required_slots:
+      - recent_start
+      - end_date
+    optional_slots: []
+    capability_tags:
+      - clientes
+      - retencion
+    chart_allowed: false
+    response_schema:
+      - inactive_customers_30d
+    sql_template: |
+      WITH historical AS (
+        SELECT DISTINCT customer_id
+        FROM transactions
+        WHERE merchant_id = '{merchant_id}'
+          AND CAST(occurred_at AS DATE) < DATE '{recent_start}'
+      ), recent AS (
+        SELECT DISTINCT customer_id
+        FROM transactions
+        WHERE merchant_id = '{merchant_id}'
+          AND CAST(occurred_at AS DATE) BETWEEN DATE '{recent_start}' AND DATE '{end_date}'
+      )
+      SELECT COUNT(*) AS inactive_customers_30d
+      FROM historical h
+      LEFT JOIN recent r ON h.customer_id = r.customer_id
+      WHERE r.customer_id IS NULL
+
+  - query_key: peak_hour_income_week
+    intent_id: peak_hours
+    status: enabled
+    description_es: Horas pico por ingresos.
+    required_slots:
+      - start_date
+      - end_date
+    optional_slots: []
+    capability_tags:
+      - horarios
+      - ingresos
+    chart_allowed: true
+    response_schema:
+      - peak_hour
+      - peak_hour_income
+    sql_template: |
+      SELECT DATE_PART('hour', CAST(occurred_at AS TIMESTAMP)) AS peak_hour,
+             SUM(amount) AS peak_hour_income
+      FROM transactions
+      WHERE merchant_id = '{merchant_id}'
+        AND CAST(occurred_at AS DATE) BETWEEN DATE '{start_date}' AND DATE '{end_date}'
+      GROUP BY peak_hour
+      ORDER BY peak_hour_income DESC, peak_hour ASC
+      LIMIT 1
+
+  - query_key: seller_performance_week
+    intent_id: seller_performance
+    status: enabled
+    description_es: Desempeno de vendedores.
+    required_slots:
+      - start_date
+      - end_date
+    optional_slots:
+      - seller_id
+    capability_tags:
+      - vendedores
+      - ingresos
+    chart_allowed: true
+    response_schema:
+      - seller_id
+      - seller_display_name
+      - role
+      - income
+      - tx_count
+    sql_template: |
+      SELECT s.seller_id, s.seller_display_name, s.role, SUM(t.amount) AS income, COUNT(*) AS tx_count
+      FROM transactions t
+      JOIN sellers s ON t.seller_id = s.seller_id AND t.merchant_id = s.merchant_id
+      WHERE t.merchant_id = '{merchant_id}'
+        AND CAST(t.occurred_at AS DATE) BETWEEN DATE '{start_date}' AND DATE '{end_date}'
+      GROUP BY s.seller_id, s.seller_display_name, s.role
+      ORDER BY income DESC, s.seller_id ASC

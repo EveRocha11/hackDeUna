@@ -68,3 +68,44 @@ class AssistantQueryResponse(BaseModel):
     chart_allowed: bool
     proactive_flags: list[str]
     clarification_question_es: str | None = None
+
+
+class AgentQueryRequest(BaseModel):
+    """Input payload for one LangGraph conversational agent turn.
+
+    Args:
+        question_es: User question in Spanish.
+        thread_id: Optional thread id to keep conversational state.
+
+    Returns:
+        AgentQueryRequest: Validated request payload.
+
+    Raises:
+        ValueError: If payload validation fails.
+    """
+
+    question_es: str = Field(min_length=1, description="Pregunta del usuario")
+    thread_id: str | None = Field(
+        default=None,
+        description="Optional thread identifier for multi-turn memory",
+    )
+
+
+class AgentQueryResponse(BaseModel):
+    """Output payload returned by LangGraph conversational agent endpoint.
+
+    Args:
+        answer_es: Final assistant answer in Spanish.
+        tool_call_names: Ordered tool call names emitted by trajectory.
+        message_count: Number of messages in the returned trajectory.
+
+    Returns:
+        AgentQueryResponse: Serialized response payload.
+
+    Raises:
+        ValueError: If output validation fails.
+    """
+
+    answer_es: str
+    tool_call_names: list[str]
+    message_count: int
