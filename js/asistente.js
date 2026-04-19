@@ -3,32 +3,31 @@
    Lógica para cargar y gestionar las preguntas frecuentes
    ============================================================ */
 
-// Cargar las preguntas desde el archivo txt
+const API_URL = 'http://localhost:8000/api/v1/agent/query';
+const THREAD_ID = 'frontend-chat-1';
+
 async function cargarPreguntas() {
   try {
     const response = await fetch('../data/Informacion.txt');
     const texto = await response.text();
-    
-    // Parsear el archivo txt: una pregunta por línea
+
     const preguntas = texto
       .split('\n')
       .map((línea, index) => ({
         id: index + 1,
         texto: línea.trim()
       }))
-      .filter(pregunta => pregunta.texto.length > 0) // Eliminar líneas vacías
-      .slice(0, 5); // Limitar a máximo 5 preguntas
-    
+      .filter(pregunta => pregunta.texto.length > 0)
+      .slice(0, 5);
+
     mostrarPreguntas(preguntas);
   } catch (error) {
     console.error('Error al cargar las preguntas:', error);
   }
 }
 
-// Mostrar las preguntas como burbujas clicables
 function mostrarPreguntas(preguntas) {
   const container = document.getElementById('preguntas-container');
-  
   if (!container) return;
 
   container.innerHTML = '';
@@ -37,24 +36,31 @@ function mostrarPreguntas(preguntas) {
     const bubble = document.createElement('button');
     bubble.className = 'pregunta-bubble';
     bubble.textContent = pregunta.texto;
-    
-    bubble.addEventListener('click', () => seleccionarPregunta(pregunta));
-    
+    bubble.addEventListener('click', () => enviarPregunta(pregunta.texto));
     container.appendChild(bubble);
   });
 }
 
-// Manejar la selección de una pregunta
-function seleccionarPregunta(pregunta) {
-  const chatContainer = document.querySelector('.asistente-chat');
-  
-  // Agregar la pregunta del usuario al chat
+function crearMensajeUsuario(texto) {
   const userMessage = document.createElement('div');
   userMessage.className = 'chat-message user-message';
-  userMessage.innerHTML = `<div class="chat-bubble user-bubble"><p>${pregunta.texto}</p></div>`;
-  chatContainer.appendChild(userMessage);
+  userMessage.innerHTML = `<div class="chat-bubble user-bubble"><p>${texto}</p></div>`;
+  return userMessage;
+}
 
-  // Agregar animación de carga mientras se procesa
+function crearMensajeBot(texto) {
+  const botMessage = document.createElement('div');
+  botMessage.className = 'chat-message bot-message';
+  botMessage.innerHTML = `
+    <img class="chat-avatar" src="../img/duni.jpeg" alt="Avatar del asistente" />
+    <div class="chat-bubble">
+      <p>${texto}</p>
+    </div>
+  `;
+  return botMessage;
+}
+
+function crearMensajeCarga() {
   const loadingMessage = document.createElement('div');
   loadingMessage.className = 'chat-message bot-message';
   loadingMessage.id = 'loading-message';
@@ -68,39 +74,107 @@ function seleccionarPregunta(pregunta) {
       </div>
     </div>
   `;
-  chatContainer.appendChild(loadingMessage);
+  return loadingMessage;
+}
 
-  // Simular respuesta del asistente (puedes personalizarla)
-  setTimeout(() => {
-    // Remover el mensaje de carga
-    const loading = document.getElementById('loading-message');
-    if (loading) {
-      loading.remove();
-    }
+function removerMensajeCarga() {
+  const loading = document.getElementById('loading-message');
+  if (loading) {
+    loading.remove();
+  }
+}
 
-    const botMessage = document.createElement('div');
-    botMessage.className = 'chat-message bot-message';
-    botMessage.innerHTML = `
-      <img class="chat-avatar" src="../img/duni.jpeg" alt="Avatar del asistente" />
-      <div class="chat-bubble">
-        <p>Estoy procesando tu pregunta: "${pregunta.texto}"</p>
-      </div>
-    `;
-    chatContainer.appendChild(botMessage);
-    
-    // Scroll al final del chat
+function scrollChatAlFinal() {
+  const chatContainer = document.querySelector('.asistente-chat');
+  if (chatContainer) {
     chatContainer.scrollTop = chatContainer.scrollHeight;
-  }, 2000);
+  }
+}
 
-  // Ocultar las preguntas frecuentes después de seleccionar una
+function ocultarPreguntasFrecuentes() {
   const preguntasSection = document.querySelector('.preguntas-frecuentes-section');
   if (preguntasSection) {
     preguntasSection.style.display = 'none';
   }
-
-  // Scroll al final del chat
-  chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// Inicializar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', cargarPreguntas);
+async function askAgent(question) {
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      question,
+      thread_id: THREAD_ID
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`API error ${response.status}: ${errorText}`);
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+async function enviarPregunta(texto) {
+  const chatContainer = document.querySelector('.asistente-chat');
+  if (!chatContainer || !texto || !texto.trim()) return;
+
+  const pregunta = texto.trim();
+  chatContainer.appendChild(crearMensajeUsuario(pregunta));
+  const loadingMessage = crearMensajeCarga();
+  chatContainer.appendChild(loadingMessage);
+  scrollChatAlFinal();
+  ocultarPreguntasFrecuentes();
+
+  try {
+    const data = await askAgent(pregunta);
+    removerMensajeCarga();
+
+    const answer = data?.answer || 'No obtuve respuesta del servidor.';
+    chatContainer.appendChild(crearMensajeBot(answer));
+  } catch (error) {
+    console.error('Error al llamar la API:', error);
+    removerMensajeCarga();
+    chatContainer.appendChild(crearMensajeBot('Lo siento, ocurrió un error al conectar con el asistente. Intenta de nuevo.'));
+  } finally {
+    scrollChatAlFinal();
+  }
+}
+
+function enviarTextoDeEntrada() {
+  const input = document.querySelector('.asistente-text-input');
+  if (!input) return;
+
+  const texto = input.value.trim();
+  if (!texto) return;
+
+  enviarPregunta(texto);
+  input.value = '';
+}
+
+function inicializarEventos() {
+  const sendButton = document.querySelector('.btn-send');
+  const textInput = document.querySelector('.asistente-text-input');
+
+  if (sendButton) {
+    sendButton.addEventListener('click', enviarTextoDeEntrada);
+  }
+
+  if (textInput) {
+    textInput.addEventListener('keydown', event => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        enviarTextoDeEntrada();
+      }
+    });
+  }
+}
+
+function inicializarAsistente() {
+  cargarPreguntas();
+  inicializarEventos();
+}
+
+document.addEventListener('DOMContentLoaded', inicializarAsistente);
