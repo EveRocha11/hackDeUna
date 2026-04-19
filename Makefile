@@ -1,6 +1,6 @@
 UV ?= uv
 
-.PHONY: setup dataset-build dataset-validate evals-build evals-agent evals-agent-fast evals-agent-langsmith agent-dev agent-up agent-build format lint type-check
+.PHONY: setup dataset-build dataset-validate evals-build evals-agent evals-agent-fast evals-agent-langsmith agent-dev agent-up agent-build api-dev format lint type-check
 
 # -----------------------------
 # Environment Setup
@@ -44,7 +44,7 @@ evals-agent-langsmith:
 
 agent-dev:
 	# Run LangGraph agent server in local dev mode.
-	$(UV) run langgraph dev --no-browser
+	$(UV) run langgraph dev
 
 agent-up:
 	# Run LangGraph agent server in Docker-based validation mode.
@@ -53,6 +53,10 @@ agent-up:
 agent-build:
 	# Build LangGraph agent server Docker image.
 	$(UV) run langgraph build -t deuna-agent
+
+api-dev:
+	# Run FastAPI app for frontend integration testing.
+	set -a; . ./.env; set +a; $(UV) run uvicorn server.api.app:app --host 0.0.0.0 --port 8000 --reload
 
 # -----------------------------
 # Code Quality

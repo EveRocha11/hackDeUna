@@ -109,3 +109,42 @@ class AgentQueryResponse(BaseModel):
     answer_es: str
     tool_call_names: list[str]
     message_count: int
+
+
+class FrontendAgentQueryRequest(BaseModel):
+    """Minimal input payload for frontend API testing.
+
+    Args:
+        question: User question in plain text.
+        thread_id: Optional thread id for multi-turn continuity.
+
+    Returns:
+        FrontendAgentQueryRequest: Validated request payload.
+
+    Raises:
+        ValueError: If payload validation fails.
+    """
+
+    question: str = Field(min_length=1, description="User question")
+    thread_id: str | None = Field(
+        default=None,
+        description="Optional thread identifier for multi-turn memory",
+    )
+
+
+class FrontendAgentQueryResponse(BaseModel):
+    """Minimal output payload for frontend API testing.
+
+    Args:
+        answer: Final assistant answer text.
+        tools: Ordered tool call names used by the runtime.
+
+    Returns:
+        FrontendAgentQueryResponse: Serialized response payload.
+
+    Raises:
+        ValueError: If output validation fails.
+    """
+
+    answer: str
+    tools: list[str]
