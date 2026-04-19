@@ -24,8 +24,8 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  max-width: 100%;
-  word-wrap: break-word;
+  width: 100%;
+  min-width: 0;
 }
 
 .chat-avatar {
@@ -38,15 +38,21 @@
 }
 
 .chat-bubble {
+  flex: 0 1 auto;
+  min-width: 0;
   max-width: 85%;
   padding: 12px 14px;
   border-radius: var(--radius-md);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .chat-message p {
   margin: 0;
   font-size: 14px;
   line-height: 1.4;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .bot-message {
@@ -60,6 +66,7 @@
 
 .user-message {
   align-self: flex-end;
+  justify-content: flex-end;
 }
 
 .user-message .chat-bubble {
