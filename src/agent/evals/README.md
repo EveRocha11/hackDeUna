@@ -96,6 +96,13 @@ Intent classifier environment variables:
 - `INTENT_CLASSIFIER_MIN_CONFIDENCE` (default: `0.65`)
 - `INTENTS_YAML_PATH` (default: `src/agent/semantics/intents.yaml`)
 
+Answer generation layer (grounded in SQL facts):
+- `ANSWER_GENERATOR_ENABLED` (default: `true`)
+- `ANSWER_GENERATOR_MODEL` (default: `gpt-4.1-mini`)
+- `ANSWER_GENERATOR_TEMPERATURE` (default: `0.0`)
+- `ANSWER_GENERATOR_TIMEOUT_SECONDS` (default: `6.0`)
+- `ANSWER_PROMPT_PATH` (default: `src/agent/prompts/generate_answer.md`)
+
 Optional text-to-SQL fallback (long-tail questions):
 - `ENABLE_TEXT2SQL_FALLBACK` (default: `false`)
 - `TEXT2SQL_MODEL` (default: `gpt-4.1-mini`)

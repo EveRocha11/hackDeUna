@@ -9,6 +9,7 @@ from pathlib import Path
 
 import duckdb
 
+from server.assistant.answer_generator import generate_answer_from_facts
 from server.assistant.intent_classifier import classify_intent_with_llm, load_allowed_intents
 from server.assistant.models import AssistantQueryRequest, AssistantQueryResponse
 from server.assistant.text2sql import TextToSQLConfig, run_text_to_sql_fallback
@@ -38,6 +39,11 @@ class AssistantRuntimeConfig:
     intent_classifier_min_confidence: float
     allowed_intents: tuple[str, ...]
     text2sql: TextToSQLConfig
+    answer_generator_enabled: bool
+    answer_generator_model: str
+    answer_generator_temperature: float
+    answer_generator_timeout_seconds: float
+    answer_prompt_path: Path
 
 
 def _env_bool(key: str, default: bool) -> bool:
@@ -87,6 +93,13 @@ def load_runtime_config() -> AssistantRuntimeConfig:
             temperature=float(os.getenv("TEXT2SQL_TEMPERATURE", "0.0")),
             timeout_seconds=float(os.getenv("TEXT2SQL_TIMEOUT_SECONDS", "8.0")),
             max_rows=int(os.getenv("TEXT2SQL_MAX_ROWS", "20")),
+        ),
+        answer_generator_enabled=_env_bool("ANSWER_GENERATOR_ENABLED", True),
+        answer_generator_model=os.getenv("ANSWER_GENERATOR_MODEL", "gpt-4.1-mini"),
+        answer_generator_temperature=float(os.getenv("ANSWER_GENERATOR_TEMPERATURE", "0.0")),
+        answer_generator_timeout_seconds=float(os.getenv("ANSWER_GENERATOR_TIMEOUT_SECONDS", "6.0")),
+        answer_prompt_path=Path(
+            os.getenv("ANSWER_PROMPT_PATH", "src/agent/prompts/generate_answer.md")
         ),
     )
 
@@ -420,6 +433,48 @@ def _build_text2sql_response(
     )
 
 
+def _finalize_answer(
+    *,
+    request: AssistantQueryRequest,
+    config: AssistantRuntimeConfig,
+    draft_answer_es: str,
+    facts_payload: dict[str, object],
+    evidence_payload: dict[str, object],
+    proactive_flags: list[str],
+) -> str:
+    """Compose final user-facing answer from deterministic facts.
+
+    Args:
+        request: Original user request.
+        config: Runtime configuration.
+        draft_answer_es: Deterministic draft answer.
+        facts_payload: SQL-grounded facts payload.
+        evidence_payload: SQL evidence metadata.
+        proactive_flags: Optional proactive flags.
+
+    Returns:
+        str: Final Spanish answer.
+
+    Raises:
+        None.
+    """
+    if not config.answer_generator_enabled or not bool(os.getenv("OPENAI_API_KEY")):
+        return draft_answer_es
+
+    generated = generate_answer_from_facts(
+        question_es=request.question_es,
+        draft_answer_es=draft_answer_es,
+        facts_payload=facts_payload,
+        evidence_payload=evidence_payload,
+        proactive_flags=proactive_flags,
+        model=config.answer_generator_model,
+        temperature=config.answer_generator_temperature,
+        timeout_seconds=config.answer_generator_timeout_seconds,
+        system_prompt_path=config.answer_prompt_path,
+    )
+    return generated or draft_answer_es
+
+
 def _query_one(
     conn: duckdb.DuckDBPyConnection,
     sql: str,
@@ -512,9 +567,26 @@ def execute_assistant_query(
                 config=config.text2sql,
             )
             if text2sql_result is not None:
+                text2sql_facts: dict[str, object] = {
+                    "columns": text2sql_result.columns,
+                    "rows": text2sql_result.rows,
+                    "row_count": len(text2sql_result.rows),
+                }
+                text2sql_evidence: dict[str, object] = {
+                    "query_key": "text2sql_fallback",
+                    "sql": text2sql_result.sql,
+                }
+                final_answer = _finalize_answer(
+                    request=request,
+                    config=config,
+                    draft_answer_es=text2sql_result.answer_es,
+                    facts_payload=text2sql_facts,
+                    evidence_payload=text2sql_evidence,
+                    proactive_flags=[],
+                )
                 return _build_text2sql_response(
                     merchant_id=merchant_id,
-                    answer_es=text2sql_result.answer_es,
+                    answer_es=final_answer,
                     sql=text2sql_result.sql,
                     columns=text2sql_result.columns,
                     rows=text2sql_result.rows,
@@ -537,9 +609,26 @@ def execute_assistant_query(
                 config=config.text2sql,
             )
             if text2sql_result is not None:
+                text2sql_facts: dict[str, object] = {
+                    "columns": text2sql_result.columns,
+                    "rows": text2sql_result.rows,
+                    "row_count": len(text2sql_result.rows),
+                }
+                text2sql_evidence: dict[str, object] = {
+                    "query_key": "text2sql_fallback",
+                    "sql": text2sql_result.sql,
+                }
+                final_answer = _finalize_answer(
+                    request=request,
+                    config=config,
+                    draft_answer_es=text2sql_result.answer_es,
+                    facts_payload=text2sql_facts,
+                    evidence_payload=text2sql_evidence,
+                    proactive_flags=[],
+                )
                 return _build_text2sql_response(
                     merchant_id=merchant_id,
-                    answer_es=text2sql_result.answer_es,
+                    answer_es=final_answer,
                     sql=text2sql_result.sql,
                     columns=text2sql_result.columns,
                     rows=text2sql_result.rows,
@@ -765,7 +854,14 @@ def execute_assistant_query(
         status="ok",
         merchant_id=merchant_id,
         intent_id=intent_id,
-        answer_es=answer_es,
+        answer_es=_finalize_answer(
+            request=request,
+            config=config,
+            draft_answer_es=answer_es,
+            facts_payload=facts_payload,
+            evidence_payload=evidence_payload,
+            proactive_flags=proactive_flags,
+        ),
         facts_payload=facts_payload,
         evidence_payload=evidence_payload,
         intent_source=intent_source,
