@@ -164,6 +164,39 @@ Respuesta esperada (forma):
 }
 ```
 
+### Transcripcion De Voz En Frontend (Experimental)
+
+Estado actual:
+
+- Se agrego una transcripcion por voz rapida en `HTML/asistente.html` + `js/asistente.js`.
+- Funciona solo del lado del navegador (no sube audio al backend).
+- Usa Web Speech API (`webkitSpeechRecognition`) y esta pensada para pruebas rapidas en Chrome.
+
+Comportamiento actual:
+
+- El usuario presiona el boton de microfono.
+- El texto se transcribe en vivo en el input.
+- Al terminar la escucha, se envia automaticamente como pregunta al endpoint del agente.
+
+Advertencia importante:
+
+- Esto es un experimento de baja complejidad, hecho para validar UX en muy poco tiempo.
+- No es una implementacion lista para produccion.
+
+Limitaciones conocidas:
+
+- Cobertura de navegadores limitada (objetivo principal: Chrome).
+- Sensible a permisos de microfono y condiciones del dispositivo.
+- Dependencia de timeouts/comportamiento del motor de reconocimiento del navegador.
+- Sin capa robusta de reintentos, observabilidad avanzada o control fino de sesiones de audio.
+
+Trabajo pendiente para una version robusta:
+
+- Mejor manejo de errores y estados de red/permisos.
+- Estrategia cross-browser real.
+- Telemetria de calidad de transcripcion.
+- Opcional: pipeline de STT backend para consistencia fuera del navegador.
+
 ### Endpoint Detallado (Interno)
 
 - Metodo: `POST`

@@ -5,6 +5,112 @@
 
 const API_URL = 'http://localhost:8000/api/v1/agent/query';
 const THREAD_ID = 'frontend-chat-1';
+let isVoiceRecording = false;
+let recognitionInstance = null;
+let voiceBuffer = '';
+let manualStopRequested = false;
+
+function notificarEnChat(texto) {
+  const chatContainer = document.querySelector('.asistente-chat');
+  if (!chatContainer) return;
+  chatContainer.appendChild(crearMensajeBot(texto));
+  scrollChatAlFinal();
+}
+
+function actualizarEstadoVisualVoz() {
+  const voiceButton = document.querySelector('.btn-voice');
+  const input = document.querySelector('.asistente-text-input');
+  if (!voiceButton || !input) return;
+
+  if (isVoiceRecording) {
+    voiceButton.classList.add('is-recording');
+    voiceButton.title = 'Detener y enviar';
+    input.placeholder = 'Escuchando... vuelve a presionar el micrófono para enviar';
+  } else {
+    voiceButton.classList.remove('is-recording');
+    voiceButton.title = 'Grabar voz';
+    input.placeholder = 'Escribe tu pregunta...';
+  }
+}
+
+function detenerYEnviarTranscripcion() {
+  if (!recognitionInstance || !isVoiceRecording) return;
+  manualStopRequested = true;
+  recognitionInstance.stop();
+}
+
+function iniciarTranscripcionVoz() {
+  if (isVoiceRecording) {
+    detenerYEnviarTranscripcion();
+    return;
+  }
+
+  const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+  if (!SpeechRecognition) {
+    notificarEnChat('Tu navegador no soporta transcripción por voz. Puedes escribir tu pregunta.');
+    return;
+  }
+
+  const input = document.querySelector('.asistente-text-input');
+  const voiceButton = document.querySelector('.btn-voice');
+  if (!input || !voiceButton) return;
+
+  const recognition = new SpeechRecognition();
+  recognitionInstance = recognition;
+  voiceBuffer = '';
+  manualStopRequested = false;
+
+  recognition.lang = 'es-EC';
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => {
+    isVoiceRecording = true;
+    actualizarEstadoVisualVoz();
+  };
+
+  recognition.onresult = event => {
+    let interimBuffer = '';
+    for (let idx = event.resultIndex; idx < event.results.length; idx += 1) {
+      const transcript = event.results?.[idx]?.[0]?.transcript?.trim();
+      if (!transcript) continue;
+      if (event.results[idx].isFinal) {
+        voiceBuffer = `${voiceBuffer} ${transcript}`.trim();
+      } else {
+        interimBuffer = `${interimBuffer} ${transcript}`.trim();
+      }
+    }
+    input.value = `${voiceBuffer} ${interimBuffer}`.trim();
+  };
+
+  recognition.onerror = () => {
+    if (manualStopRequested) return;
+    notificarEnChat('No pude transcribir el audio. Intenta de nuevo o escribe tu pregunta.');
+    isVoiceRecording = false;
+    recognitionInstance = null;
+    actualizarEstadoVisualVoz();
+  };
+
+  recognition.onend = () => {
+    const finalTranscript = input.value.trim();
+    isVoiceRecording = false;
+    recognitionInstance = null;
+    manualStopRequested = false;
+    voiceBuffer = '';
+    actualizarEstadoVisualVoz();
+
+    if (!finalTranscript) {
+      notificarEnChat('No detecté audio. Intenta de nuevo.');
+      return;
+    }
+
+    input.value = finalTranscript;
+    enviarTextoDeEntrada();
+  };
+
+  recognition.start();
+}
 
 async function cargarPreguntas() {
   try {
@@ -156,10 +262,15 @@ function enviarTextoDeEntrada() {
 
 function inicializarEventos() {
   const sendButton = document.querySelector('.btn-send');
+  const voiceButton = document.querySelector('.btn-voice');
   const textInput = document.querySelector('.asistente-text-input');
 
   if (sendButton) {
     sendButton.addEventListener('click', enviarTextoDeEntrada);
+  }
+
+  if (voiceButton) {
+    voiceButton.addEventListener('click', iniciarTranscripcionVoz);
   }
 
   if (textInput) {
